@@ -9,7 +9,7 @@ const Document = () => {
         <NextScript />
       </body>
     </Html>
-  )
-}
+  );
+};
 
 export default Document;
