@@ -1,8 +1,9 @@
 # チーム開発（第9期）
 ## 開発メンバー
-
-- 参加メンバー（担当）:
-  - 
+  - あか
+  - めでぃ
+  - 木津たかひろ
+  - 鈴木繁信
 ## 使用技術
 
 - React.js (https://github.com/facebook/react)
@@ -20,7 +21,7 @@
 
 ## バージョン情報
 
-volta で管理、volta 以外をお使いの方は自身で以下のバージョンにあわせてください。
+volta で管理
 https://volta.sh/
 
 ```
@@ -35,21 +36,21 @@ Todo リストの作成を通じて、React.js、Next.js の基礎、Git,github 
 
 ## 環境構築手順
 
-1. `git clone `
+1. `git clone https://github.com/if-mentor/next_todo_9.git`
+
 2. **github アカウントを 2 つ以上持っている方のみ、確認**
    - clone したリポジトリのディレクトリに移動
    - `git config --list`を実行する
    - vscode で github と連携をおこなっているユーザー名がプロジェクトに招待してもらっているユーザー名と同じになっているか確認
    - 同じになっていない場合は、ログインを変更する（※方法がわからない場合は、ジュンペイに連絡すること）
+
 3. リポジトリのディレクトリへ移動
+
 4. `yarn`
-    
-    package.jsonにある各パッケージの install
+    - package.jsonにある各パッケージの install
     
 5. `yarn dev `
-
-   上記を実行し、`http://localhost:3000/`
-   起動できるか確認をよろしくお願いします。
+   - 上記を実行し、`http://localhost:3000/`が起動できるか確認をよろしくお願いします。
 
 ## 開発 Tips
 
