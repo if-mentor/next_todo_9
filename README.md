@@ -2,8 +2,10 @@
 ## 開発メンバー
   - あか
   - めでぃ
+  - 入陽介
   - 木津たかひろ
   - 鈴木繁信
+  
 ## 使用技術
 
 - React.js (https://github.com/facebook/react)
