@@ -5,7 +5,8 @@
   - 入陽介
   - 木津たかひろ
   - 鈴木繁信
-  
+  - 鈴木慎乃介
+
 ## 使用技術
 
 - React.js (https://github.com/facebook/react)
