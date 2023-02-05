@@ -1,10 +1,13 @@
 import React from "react";
 import FormArea from "@/components/FormArea";
+import Layout from "@/components/Layout";
 
 const signup = () => {
   return (
     <>
-      <FormArea button="SIGN UP" />
+      <Layout>
+        <FormArea button="SIGN UP" />
+      </Layout>
     </>
   );
 };
