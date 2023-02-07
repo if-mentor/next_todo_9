@@ -31,7 +31,7 @@ const TodoTop = () => {
     color: ${colorPrimary};
   `;
 
-  const ButtonPage = styled.button`
+  const SButtonPage = styled(Button)`
     width: 40px;
     height: 40px;
     border: 1px solid #000000cc;
@@ -41,13 +41,13 @@ const TodoTop = () => {
     background-color: #ffffff;
   `;
 
-  const ButtonPagePrev = styled(ButtonPage)`
+  const SButtonPagePrev = styled(SButtonPage)`
     background-color: #b5b5b5;
     color: #ffffff;
     border: none;
   `;
 
-  const ButtonPageNext = styled(ButtonPage)`
+  const SButtonPageNext = styled(SButtonPage)`
     color: #b5b5b5;
   `;
 
@@ -332,13 +332,13 @@ const TodoTop = () => {
           </TableContainer>
 
           <HStack justifyContent={"center"} marginTop={"16px"}>
-            <ButtonPagePrev>{"<"}</ButtonPagePrev>
-            <ButtonPage>1</ButtonPage>
-            <ButtonPage>2</ButtonPage>
-            <ButtonPage>...</ButtonPage>
-            <ButtonPage>5</ButtonPage>
-            <ButtonPage>6</ButtonPage>
-            <ButtonPageNext>{">"}</ButtonPageNext>
+            <SButtonPagePrev>{"<"}</SButtonPagePrev>
+            <SButtonPage>1</SButtonPage>
+            <SButtonPage>2</SButtonPage>
+            <SButtonPage>...</SButtonPage>
+            <SButtonPage>5</SButtonPage>
+            <SButtonPage>6</SButtonPage>
+            <SButtonPageNext>{">"}</SButtonPageNext>
           </HStack>
         </Container>
       </Box>
