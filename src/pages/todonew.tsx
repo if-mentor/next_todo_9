@@ -27,7 +27,7 @@ const todonew = () => {
         pt={1}
         fontSize="1.8em"
       >
-        TODO
+        TODOあああ
       </Box>
       <Box mr={10} ml={10}>
         <FormControl>
