@@ -84,7 +84,7 @@ const TodoTop = () => {
   ];
 
   return (
-    <Box fontFamily={"Roboto"} color={colorPrimary}>
+    <Box color={colorPrimary}>
       <Heading
         background={bgcColorPrimary}
         h="80px"
