@@ -9,13 +9,13 @@ function todoShow() {
       <Layout>
         <D1>
           <Heading
-            width="161px"
+            width="200px"
             height="33px"
             fontSize="2xl"
             fontFamily="Roboto"
             fontStyle="normal"
             fontWeight="700"
-            margin="16px 680px 22px 0px"
+            margin="16px 641px 22px 0px"
           >
             SHOW TODO
           </Heading>
