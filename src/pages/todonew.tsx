@@ -46,11 +46,11 @@ const todonew = () => {
             <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
               TITLE
             </Text>
-            <Input mb={5} type="text" defaultValue="Text" />
+            <Input mb={5} type="text" placeholder="Text" />
             <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
               DETAIL
             </Text>
-            <Textarea mb={5} h="192px" defaultValue="Text" />
+            <Textarea mb={5} h="192px" placeholder="Text" />
             <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
               PRIORITY
             </Text>
@@ -62,7 +62,6 @@ const todonew = () => {
               </Stack>
             </RadioGroup>
             <Box mt={4} textAlign={"right"}>
-              {" "}
               <Button mr={3} type="button" borderRadius="full" bg="red.100">
                 DRAFT
               </Button>
