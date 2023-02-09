@@ -205,7 +205,7 @@ const TodoTop = () => {
               <Tbody fontWeight={"bold"}>
                 {sampleTodos.map((sampleTodo) => {
                   let statusFontSize = "18px";
-                  let statusBorderColor = "#001F2B";
+                  let statusBorderColor = "#023945";
                   let statusBackgroundColor = "#F0FCFF";
                   switch (sampleTodo.status) {
                     case "NOT STARTED":
