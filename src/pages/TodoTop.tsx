@@ -229,12 +229,12 @@ const TodoTop = () => {
                       sx={{ td: { padding: 0 } }}
                       height={"56px"}
                     >
-                      <Td minW={"384px"} maxW={"384px"}>
+                      <Td>
                         <Box w={"100%"} h={"100%"} px={"12px"} py={"18px"}>
                           {sampleTodo.task}
                         </Box>
                       </Td>
-                      <Td minW={"139px"} maxW={"139px"}>
+                      <Td>
                         <Box
                           display={"inline-block"}
                           w={"100%"}
@@ -254,7 +254,7 @@ const TodoTop = () => {
                           </Button>
                         </Box>
                       </Td>
-                      <Td minW={"139px"} maxW={"139px"}>
+                      <Td>
                         <Box
                           display={"inline-block"}
                           w={"100%"}
@@ -272,8 +272,6 @@ const TodoTop = () => {
                         </Box>
                       </Td>
                       <Td
-                        minW={"139px"}
-                        maxW={"139px"}
                         p={0}
                         fontSize={"14px"}
                         textAlign={"center"}
@@ -281,15 +279,13 @@ const TodoTop = () => {
                         2020-11-8 18:55
                       </Td>
                       <Td
-                        minW={"139px"}
-                        maxW={"139px"}
                         p={0}
                         fontSize={"14px"}
                         textAlign={"center"}
                       >
                         2020-11-8 18:55
                       </Td>
-                      <Td minW={"139px"} maxW={"139px"}>
+                      <Td>
                         <Box px={"20px"}>
                           <HStack>
                             <Spacer />
