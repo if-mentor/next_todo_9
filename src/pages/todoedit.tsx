@@ -56,7 +56,7 @@ function TodoEdit() {
         </Box>
         <Spacer/>
         <Button 
-            bg='#95e3f4'
+            bg='#40D1F1'
             size='sm'
             p = '0 20px'
             border='1px solid black'
