@@ -22,7 +22,7 @@ const todonew = () => {
     <div>
       <Layout>
         <Container maxW={"1080px"} position={"relative"} p={"0"}>
-          <Box mr={10} ml={10}>
+          <Box>
             <FormControl>
               <Flex mt={5}>
                 <Box w={"100%"}>
