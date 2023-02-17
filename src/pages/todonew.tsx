@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "@/components/Layout";
 
+
 //Chakra UI
 import {
   FormControl,
@@ -17,7 +18,30 @@ import {
   Container,
 } from "@chakra-ui/react";
 
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/libs/firebase";
+
+
 const todonew = () => {
+
+  const [title,setTitle] = React.useState<string>('')
+
+  const handleClick = async()=>{
+    try {
+      const docRef = await addDoc(collection(db, "todos"), {
+        title: title
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+}
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  }
+  
+  
   return (
     <div>
       <Layout>
@@ -48,7 +72,8 @@ const todonew = () => {
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 TITLE
               </Text>
-              <Input mb={5} type="text" placeholder="Text" />
+             
+              <Input mb={5} type="text" placeholder="Text" onChange={handleChange} />
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 DETAIL
               </Text>
@@ -72,6 +97,7 @@ const todonew = () => {
                   colorScheme="twitter"
                   type="submit"
                   borderRadius="full"
+                  onClick={()=>handleClick()}
                 >
                   CREATE
                 </Button>
