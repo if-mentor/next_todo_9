@@ -7,7 +7,9 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
 import { useAtom } from "jotai";
 import { userAtom } from "../atom";
-
+type USER = {
+  id: string;
+};
 const signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,16 +17,16 @@ const signup = () => {
   const router = useRouter();
   //最初に開いた時にuserInfoがあるときはトップに遷移させる
   useEffect(() => {
-    if (userInfo.email) {
+    if (userInfo.id) {
       router.push("/TodoTop");
     }
   }, []);
   const onClickSignUp = async () => {
     try {
       //firebase宛にemail、passwordを送り、新規ユーザー登録をする。
-      await createUserWithEmailAndPassword(auth, email, password);
+      const user = await createUserWithEmailAndPassword(auth, email, password);
       //Context宛にemail、passwordを送り、ユーザー情報を保管する。
-      setUserInfo({ email: email, password: password });
+      setUserInfo({ id: user.user.uid });
       //サインアップ画面からTODO一覧に自動遷移させる
       router.push("/TodoTop");
     } catch (e) {

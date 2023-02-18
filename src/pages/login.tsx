@@ -16,7 +16,7 @@ const login = () => {
 
   //最初に開いた時にuserInfoがあるときはトップに遷移させる
   useEffect(() => {
-    if (userInfo.email) {
+    if (userInfo.id) {
       router.push("/TodoTop");
     }
   }, []);
@@ -24,9 +24,9 @@ const login = () => {
   const onClickLogin = async () => {
     try {
       //firebase宛にemail、passwordを送り、ログイン認証をする。
-      await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
       //Context宛にemail、passwordを送り、ユーザー情報を保管する。
-      setUserInfo({ email: email, password: password });
+      setUserInfo({ id: user.user.uid });
       //ログイン画面からTODO一覧に自動遷移させる
       router.push("/TodoTop");
     } catch (e) {
