@@ -33,7 +33,7 @@ const TodoTop = () => {
   const [userInfo] = useAtom(userAtom);
   const router = useRouter();
 
-  //最初に開いた時にuserInfoがあるときはトップに遷移させる
+  //最初に開いた時にuserInfoがないときはログインに遷移させる
   useEffect(() => {
     if (!userInfo.email) {
       router.push("/login");
