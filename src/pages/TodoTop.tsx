@@ -22,10 +22,23 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import Layout from "@/components/Layout";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+import { userAtom } from "../atom";
 
 const TodoTop = () => {
   const bgcColorPrimary = "#95E3F4";
   const colorPrimary = "#000000CC";
+  const [userInfo] = useAtom(userAtom);
+  const router = useRouter();
+
+  //最初に開いた時にuserInfoがあるときはトップに遷移させる
+  useEffect(() => {
+    if (!userInfo.email) {
+      router.push("/login");
+    }
+  }, []);
 
   const STh = styled(Th)`
     color: ${colorPrimary};
@@ -271,18 +284,10 @@ const TodoTop = () => {
                           </Select>
                         </Box>
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
                         2020-11-8 18:55
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
                         2020-11-8 18:55
                       </Td>
                       <Td>
