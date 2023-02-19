@@ -1,9 +1,69 @@
 import { Box, Button, Heading } from "@chakra-ui/react";
-import React from "react";
-import Layout from "../components/Layout";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/libs/firebase";
 
-function todoShow() {
+function TodoShow() {
+  type todos = {
+    title: string
+    detail: string,
+    create: string,
+    update: string,
+  };
+
+  const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+
+  const router = useRouter();
+
+
+  // TODO 共通へ持っていく
+  /**
+   * unix時間を画面表示する文字列へ変換
+   * 
+   * 戻り値 例： 2020-11-8 18:55
+   * 
+   * @param unixTimeSeconds 
+   * @returns 
+   */
+  const formatDateStr = (unixTimeSeconds: number) => {
+    const date = new Date(unixTimeSeconds * 1000);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    let { id } = router.query;
+
+    if (typeof id !== "string") {
+      return;
+    }
+
+    (async () => {
+      const todoDocRef = doc(db, "todoposts", id);
+      const todoDocSnap = await getDoc(todoDocRef);
+      const todoDocObj = todoDocSnap.data();
+
+      if (todoDocObj) {
+        // TODO
+        console.log(todoDocObj);
+
+        const create = formatDateStr(todoDocObj.create.seconds);
+        const update = formatDateStr(todoDocObj.update.seconds);
+
+        setTodos({
+          title: todoDocObj.title,
+          detail: todoDocObj.detail,
+          create,
+          update,
+        });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
   return (
     <>
       <Layout>
@@ -49,19 +109,10 @@ function todoShow() {
             <D2>
               <Box margin="10px">
                 <P3>TITLE</P3>
-                <P4>GITHUB上に静的サイトをホスティングする</P4>
+                <P4>{todos.title}</P4>
                 <P3>DETAIL</P3>
                 <P5>
-                  AWSコンソールでAWS
-                  AMPLIFYを使って静的ウェブサイトをホスティングします。AWS
-                  AMPLIFYは、
-                  静的ウェブサイトおよびウェブアプリにフルマネージドのホスティングを提供します。
-                  AMPLIFYのホスティングソリューションは、AMAZONC
-                  LOUDFRONTとAMAZON S3を使って、
-                  AWSコンテンツ配信ネットワーク（CDN）を介してサイトアセットを提供します。
-                  <br></br>
-                  継続的デプロイをセットアップします。AMPLIFYは、継続的デプロイでGITベースのワークフローを提供します。
-                  それにより、コードコミットごとに、サイトに自動的に更新をデプロイすることができます。
+                  {todos.detail}
                 </P5>
                 <Box display="flex">
                   <Button
@@ -90,11 +141,12 @@ function todoShow() {
 
                   <Box margin="16px 48px 0px 0px">
                     <P7>Create</P7>
-                    <P9>2020-11-8 18:55</P9>
+
+                    <P9>{todos.create}</P9>
                   </Box>
                   <Box marginTop="16px">
                     <P8>Update</P8>
-                    <P9>2020-11-8 18:55</P9>
+                    <P9>{todos.update}</P9>
                   </Box>
                 </Box>
               </Box>
@@ -138,7 +190,7 @@ function todoShow() {
   );
 }
 
-export default todoShow;
+export default TodoShow;
 
 const D1 = styled.div`
   display: flex;
