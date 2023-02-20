@@ -18,8 +18,6 @@ function TodoShow() {
 
   const router = useRouter();
 
-
-  // TODO 共通へ持っていく
   /**
    * unix時間を画面表示する文字列へ変換
    * 
@@ -47,9 +45,6 @@ function TodoShow() {
       const todoDocObj = todoDocSnap.data();
 
       if (todoDocObj) {
-        // TODO
-        console.log(todoDocObj);
-
         const create = formatDateStr(todoDocObj.create.seconds);
         const update = formatDateStr(todoDocObj.update.seconds);
 
