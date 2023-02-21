@@ -1,3 +1,23 @@
+import { db } from "@/libs/firebase";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+/**
+ * unix時間を画面表示する文字列へ変換
+ *
+ * 戻り値 例： 	2020-11-8 18:55
+ *
+ * @param unixTimeSeconds
+ * @returns
+ */
+const formatDateStr = (unixTimeSeconds: number) => {
+  const date = new Date(unixTimeSeconds * 1000);
+  return `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+};
+
 import styled from "@emotion/styled";
 import {
   Stack,
@@ -26,11 +46,9 @@ import Layout from "@/components/Layout";
 const TodoTop = () => {
   const bgcColorPrimary = "#95E3F4";
   const colorPrimary = "#000000CC";
-
   const STh = styled(Th)`
     color: ${colorPrimary};
   `;
-
   const SButtonPage = styled(Button)`
     width: 40px;
     height: 40px;
@@ -40,49 +58,87 @@ const TodoTop = () => {
     font-weight: bold;
     background-color: #ffffff;
   `;
-
   const SButtonPagePrev = styled(SButtonPage)`
     background-color: #b5b5b5;
     color: #ffffff;
     border: none;
   `;
-
   const SButtonPageNext = styled(SButtonPage)`
     color: #b5b5b5;
   `;
 
-  const sampleTodos = [
+  //status構成要素定義
+  const statuslist = [
     {
       id: 1,
-      task: "github上に静的サイトをホスティングする",
       status: "NOT STARTED",
+      statusFontSize: "12px",
+      statusBorderColor: "#001F2B",
+      statusBackgroundColor: "#F0FCFF",
     },
     {
       id: 2,
-      task: "ReactでTodoサイトを作成する",
       status: "DOING",
+      statusBackgroundColor: "#95E3F4",
     },
     {
       id: 3,
-      task: "Firestore Hostingを学習する",
       status: "DONE",
-    },
-    {
-      id: 4,
-      task: "感謝の正拳突き",
-      status: "DOING",
-    },
-    {
-      id: 5,
-      task: "二重の極み",
-      status: "DONE",
-    },
-    {
-      id: 6,
-      task: "魔封波",
-      status: "DOING",
+      statusBackgroundColor: "#28ADCA",
     },
   ];
+
+  //Priority構成要素定義
+  const prioritylist = [
+    {
+      id: 1,
+      priority: "High",
+    },
+    {
+      id: 2,
+      priority: "Middle",
+    },
+    {
+      id: 3,
+      priority: "Low",
+    },
+  ];
+
+  //useState設定
+  const [todos, setTodos] = useState<string[]>([]);
+  const [isEdit, setIsEdit] = useState(false);
+
+  //データ取得
+  const arrList: any = [];
+  useEffect(() => {
+    const fireStorePostData = collection(db, "todoposts");
+    getDocs(fireStorePostData).then((snapShot) => {
+      snapShot.forEach((docs) => {
+        const doc = docs.data();
+        const docid = docs.id;
+        arrList.push({
+          uid: doc.uid,
+          todoid: docid,
+          title: doc.title,
+          detail: doc.detail,
+          status: doc.status,
+          priority: doc.priority,
+          create: doc.create,
+          update: doc.update,
+          comid: doc.comid,
+        });
+      });
+
+      setTodos(arrList);
+      setIsEdit(false);
+    });
+  }, [isEdit]);
+
+  //削除処理
+  const deleteTodo = async (docId) => {
+    await deleteDoc(doc(db, "todoposts", docId));
+    setIsEdit(true);
+  };
 
   return (
     <Layout>
@@ -145,9 +201,9 @@ const TodoTop = () => {
                 STATUS
               </Text>
               <Select borderColor={colorPrimary} placeholder="- - - - - - -">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                {statuslist.map((statusItem) => (
+                  <option value={statusItem.id}>{statusItem.status}</option>
+                ))}
               </Select>
             </Stack>
 
@@ -156,9 +212,11 @@ const TodoTop = () => {
                 PRIORITY
               </Text>
               <Select borderColor={colorPrimary} placeholder="- - - - - - -">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                {prioritylist.map((priorityItem) => (
+                  <option value={priorityItem.id}>
+                    {priorityItem.priority}
+                  </option>
+                ))}
               </Select>
             </Stack>
 
@@ -174,7 +232,7 @@ const TodoTop = () => {
               </Button>
             </Stack>
           </HStack>
-
+          {console.log(todos)}
           <TableContainer marginTop={"33px"}>
             <Table variant="simple" maxW={"100%"} overflow={"none"}>
               <Thead background={bgcColorPrimary}>
@@ -203,35 +261,22 @@ const TodoTop = () => {
                 </Tr>
               </Thead>
               <Tbody fontWeight={"bold"}>
-                {sampleTodos.map((sampleTodo) => {
+                {todos.map((todo) => {
                   let statusFontSize = "18px";
                   let statusBorderColor = "#023945";
                   let statusBackgroundColor = "#F0FCFF";
-                  switch (sampleTodo.status) {
-                    case "NOT STARTED":
-                      statusFontSize = "12px";
-                      statusBorderColor = "#001F2B";
-                      statusBackgroundColor = "#F0FCFF";
-                      break;
-
-                    case "DOING":
-                      statusBackgroundColor = "#95E3F4";
-                      break;
-
-                    case "DONE":
-                      statusBackgroundColor = "#28ADCA";
-                      break;
-                  }
 
                   return (
                     <Tr
-                      key={sampleTodo.id}
+                      key={todo.todoid}
                       sx={{ td: { padding: 0 } }}
                       height={"56px"}
                     >
                       <Td>
                         <Box w={"100%"} h={"100%"} px={"12px"} py={"18px"}>
-                          {sampleTodo.task}
+                          <Link href={"./todo_show/" + todo.todoid}>
+                            {todo.title}
+                          </Link>
                         </Box>
                       </Td>
                       <Td>
@@ -246,11 +291,17 @@ const TodoTop = () => {
                             border={"1px"}
                             rounded={"full"}
                             textAlign={"center"}
-                            fontSize={statusFontSize}
-                            borderColor={statusBorderColor}
-                            backgroundColor={statusBackgroundColor}
+                            fontSize={
+                              statuslist[todo.status - 1].statusFontSize
+                            }
+                            borderColor={
+                              statuslist[todo.status - 1].statusBorderColor
+                            }
+                            backgroundColor={
+                              statuslist[todo.status - 1].statusBackgroundColor
+                            }
                           >
-                            {sampleTodo.status}
+                            {statuslist[todo.status - 1].status}
                           </Button>
                         </Box>
                       </Td>
@@ -265,58 +316,60 @@ const TodoTop = () => {
                             w={"112px"}
                             borderColor={"#30494F"}
                           >
-                            <option value="option1">High</option>
-                            <option value="option2">Middle</option>
-                            <option value="option3">Low</option>
+                            {prioritylist.map((priorityItem) => (
+                              <option
+                                value={priorityItem.id}
+                                selected={todo.priority === priorityItem.id}
+                              >
+                                {priorityItem.priority}
+                              </option>
+                            ))}
                           </Select>
                         </Box>
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
-                        2020-11-8 18:55
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
+                        {formatDateStr(todo.create.seconds)}
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
-                        2020-11-8 18:55
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
+                        {formatDateStr(todo.update.seconds)}
                       </Td>
                       <Td>
-                        <Box px={"20px"}>
+                        <Box>
                           <HStack>
-                            <Spacer />
-                            <svg
-                              width="19"
-                              height="18"
-                              viewBox="0 0 19 18"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
-                                fill="black"
-                                fillOpacity="0.8"
-                              />
-                            </svg>
-                            <Spacer />
-                            <svg
-                              width="14"
-                              height="18"
-                              viewBox="0 0 14 18"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M1.44831 16C1.44831 17.1 2.31727 18 3.37934 18H11.1035C12.1655 18 13.0345 17.1 13.0345 16V4H1.44831V16ZM3.37934 6H11.1035V16H3.37934V6ZM10.6207 1L9.6552 0H4.82762L3.8621 1H0.482788V3H14V1H10.6207Z"
-                                fill="black"
-                                fillOpacity="0.8"
-                              />
-                            </svg>
-                            <Spacer />
+                            <Link href={"./todoedit/" + todo.todoid}>
+                              <Spacer px={"20px"}>
+                                <svg
+                                  width="19"
+                                  height="18"
+                                  viewBox="0 0 19 18"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
+                                    fill="black"
+                                    fillOpacity="0.8"
+                                  />
+                                </svg>
+                              </Spacer>
+                            </Link>
+                            <button onClick={() => deleteTodo(todo.todoid)}>
+                              <Spacer>
+                                <svg
+                                  width="14"
+                                  height="18"
+                                  viewBox="0 0 14 18"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M1.44831 16C1.44831 17.1 2.31727 18 3.37934 18H11.1035C12.1655 18 13.0345 17.1 13.0345 16V4H1.44831V16ZM3.37934 6H11.1035V16H3.37934V6ZM10.6207 1L9.6552 0H4.82762L3.8621 1H0.482788V3H14V1H10.6207Z"
+                                    fill="black"
+                                    fillOpacity="0.8"
+                                  />
+                                </svg>
+                              </Spacer>
+                            </button>
                           </HStack>
                         </Box>
                       </Td>
