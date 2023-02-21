@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect ,useState,ChangeEvent} from "react";
 import Layout from "@/components/Layout";
 
 
@@ -24,22 +24,37 @@ import { db } from "@/libs/firebase";
 
 const todonew = () => {
 
-  const [title,setTitle] = React.useState<string>('')
+  const [title,setTitle] = useState<string>('')
+  const [detail,setDetail] = useState<string>('')
+  const [priority,setPriority] = useState<string>('')
 
   const handleClick = async()=>{
     try {
-      const docRef = await addDoc(collection(db, "todos"), {
-        title: title
+      const docRef = await addDoc(collection(db, "todoposts"), {
+        title: title,
+        detail: detail,
+        priority: priority
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-}
+  }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(()=>{
+    console.log('レンダーされました')
+  },[title,detail,priority])
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   }
+  const handleTextareaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDetail(event.target.value);
+  }
+  const handleRadioButtonChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPriority(event.target.value);
+  }
+  
   
   
   return (
@@ -73,17 +88,17 @@ const todonew = () => {
                 TITLE
               </Text>
              
-              <Input mb={5} type="text" placeholder="Text" onChange={handleChange} />
+              <Input mb={5} type="text" placeholder="Text" onChange={handleInputChange} />
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 DETAIL
               </Text>
-              <Textarea mb={5} h="192px" placeholder="Text" />
+              <Textarea mb={5} h="192px" placeholder="Text" onChange={handleTextareaChange}/>
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 PRIORITY
               </Text>
               <RadioGroup>
-                <Stack direction="row" fontSize={"24px"}>
-                  <Radio value="1">High</Radio>
+                <Stack direction="row" fontSize={"24px"} onChange={handleRadioButtonChange}>
+                  <Radio value="1" >High</Radio>
                   <Radio value="2">Middle</Radio>
                   <Radio value="3">Low</Radio>
                 </Stack>
@@ -111,3 +126,4 @@ const todonew = () => {
 };
 
 export default todonew;
+
