@@ -1,5 +1,12 @@
 import { db } from "@/libs/firebase";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -17,6 +24,18 @@ const formatDateStr = (unixTimeSeconds: number) => {
     date.getMonth() + 1
   }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 };
+
+//ダミーデータ登録　後で削除
+// const citiesRef = collection(db, "todoposts");
+// setDoc(doc(citiesRef), {
+//   title: "タイトル",
+//   detail: "詳細",
+//   status: 1,
+//   priority: 2,
+//   create: new Date(),
+//   update: new Date(),
+//   comid: "comid",
+// });
 
 import styled from "@emotion/styled";
 import {
@@ -106,6 +125,8 @@ const TodoTop = () => {
 
   //useState設定
   const [todos, setTodos] = useState<string[]>([]);
+  const [filteredtodos, setFilteredtodos] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isEdit, setIsEdit] = useState(false);
 
   //データ取得
@@ -130,14 +151,67 @@ const TodoTop = () => {
       });
 
       setTodos(arrList);
+      setFilteredtodos(arrList);
       setIsEdit(false);
     });
   }, [isEdit]);
 
   //削除処理
-  const deleteTodo = async (docId) => {
+  const deleteTodo = async (docId: string) => {
     await deleteDoc(doc(db, "todoposts", docId));
     setIsEdit(true);
+  };
+
+  //status変更処理
+  const statusChangeTodo = async (event: any, docId: string) => {
+    let priID = Number(event.target.value);
+
+    await updateDoc(doc(db, "todoposts", docId), {
+      priority: priID,
+    });
+
+    setIsEdit(true);
+  };
+
+  //検索処理
+  const handleSearch = (event: any) => {
+    const searchTerm = event.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    const filteredList = todos.filter((item: any) =>
+      item.title.toLowerCase().includes(searchTerm)
+    );
+    setFilteredtodos(filteredList);
+  };
+
+  //statusフィルター処理
+  const statusFilter = (event: any) => {
+    let status = Number(event.target.value);
+    if (status === 0) {
+      setFilteredtodos(todos);
+    } else {
+      const filteredList = todos.filter((todo) => todo.status === status);
+      setFilteredtodos(filteredList);
+    }
+  };
+
+  //priority	フィルター処理
+  const priorityFilter = (event: any) => {
+    let priority = Number(event.target.value);
+    if (priority === 0) {
+      setFilteredtodos(todos);
+    } else {
+      const filteredList = todos.filter(
+        (todo: any) => todo.priority === priority
+      );
+      setFilteredtodos(filteredList);
+    }
+  };
+
+  //フィルターreset処理
+  const resetFilter = () => {
+    setFilteredtodos(todos);
+    setSearchTerm("");
   };
 
   return (
@@ -176,7 +250,12 @@ const TodoTop = () => {
                 SEARCH
               </Text>
               <InputGroup>
-                <Input type="text" borderColor={colorPrimary} />
+                <Input
+                  type="text"
+                  borderColor={colorPrimary}
+                  value={searchTerm}
+                  onChange={handleSearch}
+                />
                 <InputRightElement pointerEvents="none">
                   <svg
                     width="20"
@@ -200,9 +279,15 @@ const TodoTop = () => {
               <Text fontSize={"18px"} fontWeight={"bold"}>
                 STATUS
               </Text>
-              <Select borderColor={colorPrimary} placeholder="- - - - - - -">
+              <Select
+                borderColor={colorPrimary}
+                placeholder="- - - - - - -"
+                onChange={(e) => statusFilter(e)}
+              >
                 {statuslist.map((statusItem) => (
-                  <option value={statusItem.id}>{statusItem.status}</option>
+                  <option key={statusItem.id} value={statusItem.id}>
+                    {statusItem.status}
+                  </option>
                 ))}
               </Select>
             </Stack>
@@ -211,9 +296,13 @@ const TodoTop = () => {
               <Text fontSize={"18px"} fontWeight={"bold"}>
                 PRIORITY
               </Text>
-              <Select borderColor={colorPrimary} placeholder="- - - - - - -">
+              <Select
+                borderColor={colorPrimary}
+                placeholder="- - - - - - -"
+                onChange={(e) => priorityFilter(e)}
+              >
                 {prioritylist.map((priorityItem) => (
-                  <option value={priorityItem.id}>
+                  <option key={priorityItem.id} value={priorityItem.id}>
                     {priorityItem.priority}
                   </option>
                 ))}
@@ -227,12 +316,12 @@ const TodoTop = () => {
                 fontSize={"18px"}
                 w={"104px"}
                 backgroundColor={"#B0C6CB"}
+                onClick={() => resetFilter()}
               >
                 RESET
               </Button>
             </Stack>
           </HStack>
-          {console.log(todos)}
           <TableContainer marginTop={"33px"}>
             <Table variant="simple" maxW={"100%"} overflow={"none"}>
               <Thead background={bgcColorPrimary}>
@@ -261,11 +350,10 @@ const TodoTop = () => {
                 </Tr>
               </Thead>
               <Tbody fontWeight={"bold"}>
-                {todos.map((todo) => {
+                {filteredtodos.map((todo: any) => {
                   let statusFontSize = "18px";
                   let statusBorderColor = "#023945";
                   let statusBackgroundColor = "#F0FCFF";
-
                   return (
                     <Tr
                       key={todo.todoid}
@@ -315,11 +403,13 @@ const TodoTop = () => {
                             display={"inline-block"}
                             w={"112px"}
                             borderColor={"#30494F"}
+                            onChange={(e) => statusChangeTodo(e, todo.todoid)}
+                            value={todo.priority}
                           >
                             {prioritylist.map((priorityItem) => (
                               <option
+                                key={priorityItem.id}
                                 value={priorityItem.id}
-                                selected={todo.priority === priorityItem.id}
                               >
                                 {priorityItem.priority}
                               </option>
@@ -370,6 +460,12 @@ const TodoTop = () => {
                                 </svg>
                               </Spacer>
                             </button>
+
+                            {/* <button
+                              onClick={() => statusChangeTodo(todo.todoid)}
+                            >
+                              4444
+                            </button> */}
                           </HStack>
                         </Box>
                       </Td>
