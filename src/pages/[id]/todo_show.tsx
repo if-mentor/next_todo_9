@@ -5,6 +5,7 @@ import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
+import { formatDateStr } from "@/utils";
 
 function TodoShow() {
   type todos = {
@@ -17,22 +18,6 @@ function TodoShow() {
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
 
   const router = useRouter();
-
-  /**
-   * unix時間を画面表示する文字列へ変換
-   * 
-   * 戻り値 例： 2020-11-8 18:55
-   * 
-   * @param unixTimeSeconds 
-   * @returns 
-   */
-  const formatDateStr = (unixTimeSeconds: number) => {
-    const date = new Date(unixTimeSeconds * 1000);
-    const hour = ("0" + date.getHours()).slice(-2);
-    const minute = ("0" + date.getMinutes()).slice(-2);
-
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${hour}:${minute}`;
-  };
 
   useEffect(() => {
     if (!router.isReady) return;
