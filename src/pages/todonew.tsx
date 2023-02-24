@@ -1,4 +1,4 @@
-import React, { useEffect ,useState,ChangeEvent} from "react";
+import React, { useState,ChangeEvent} from "react";
 import Layout from "@/components/Layout";
 
 
@@ -18,32 +18,35 @@ import {
   Container,
 } from "@chakra-ui/react";
 
-import { collection, addDoc } from "firebase/firestore";
+import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 
 
-const todonew = () => {
+const Todonew = () => {
 
   const [title,setTitle] = useState<string>('')
   const [detail,setDetail] = useState<string>('')
-  const [priority,setPriority] = useState<string>('')
+  const [priority,setPriority] = useState<number>(0)
 
   const handleClick = async()=>{
     try {
-      const docRef = await addDoc(collection(db, "todoposts"), {
-        title: title,
-        detail: detail,
-        priority: priority
-      });
-      console.log("Document written with ID: ", docRef.id);
+      const newTodoposts = doc(collection(db, "todoposts"));
+      await setDoc(newTodoposts,
+        {
+          uid:newTodoposts.id,
+          user_id:null,
+          title: title,
+          detail: detail,
+          status:null,
+          priority: priority,
+          create: Timestamp.now(),
+          update:Timestamp.now(),
+        }
+      );
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   }
-
-  useEffect(()=>{
-    console.log('レンダーされました')
-  },[title,detail,priority])
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -52,11 +55,9 @@ const todonew = () => {
     setDetail(event.target.value);
   }
   const handleRadioButtonChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setPriority(event.target.value);
+    setPriority(Number(event.target.value));
   }
-  
-  
-  
+
   return (
     <div>
       <Layout>
@@ -87,7 +88,7 @@ const todonew = () => {
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 TITLE
               </Text>
-             
+
               <Input mb={5} type="text" placeholder="Text" onChange={handleInputChange} />
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 DETAIL
@@ -125,5 +126,5 @@ const todonew = () => {
   );
 };
 
-export default todonew;
+export default Todonew;
 
