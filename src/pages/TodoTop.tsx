@@ -9,33 +9,8 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-/**
- * unix時間を画面表示する文字列へ変換
- *
- * 戻り値 例： 	2020-11-8 18:55
- *
- * @param unixTimeSeconds
- * @returns
- */
-const formatDateStr = (unixTimeSeconds: number) => {
-  const date = new Date(unixTimeSeconds * 1000);
-  return `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-};
-
-//ダミーデータ登録　後で削除
-// const citiesRef = collection(db, "todoposts");
-// setDoc(doc(citiesRef), {
-//   title: "タイトル",
-//   detail: "詳細",
-//   status: 1,
-//   priority: 2,
-//   create: new Date(),
-//   update: new Date(),
-//   comid: "comid",
-// });
+//unix時間を画面表示する文字列へ変換
+import { formatDateStr } from "@/utils";
 
 import styled from "@emotion/styled";
 import {
@@ -128,6 +103,8 @@ const TodoTop = () => {
   const [filteredtodos, setFilteredtodos] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isEdit, setIsEdit] = useState(false);
+  const [priorityval, setPriorityval] = useState<number>(0);
+  const [statusval, setStatusval] = useState<number>(0);
 
   //データ取得
   const arrList: any = [];
@@ -153,6 +130,20 @@ const TodoTop = () => {
       setTodos(arrList);
       setFilteredtodos(arrList);
       setIsEdit(false);
+
+      //再フィルタリング
+      if (priorityval != 0) {
+        const filteredList = todos.filter(
+          (todo: any) => todo.priority === priorityval
+        );
+        setFilteredtodos(filteredList);
+      }
+      if (statusval != 0) {
+        const filteredList = todos.filter(
+          (todo: any) => todo.status === statusval
+        );
+        setFilteredtodos(filteredList);
+      }
     });
   }, [isEdit]);
 
@@ -177,28 +168,37 @@ const TodoTop = () => {
   const handleSearch = (event: any) => {
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-
+  };
+  const searchFilter = () => {
+    //初期状態
+    setFilteredtodos(todos);
     const filteredList = todos.filter((item: any) =>
       item.title.toLowerCase().includes(searchTerm)
     );
     setFilteredtodos(filteredList);
   };
 
-  //statusフィルター処理
+  //statusフィルター処理(or条件)
   const statusFilter = (event: any) => {
     let status = Number(event.target.value);
+    setStatusval(status);
+    setPriorityval(0);
     if (status === 0) {
+      //リセット
       setFilteredtodos(todos);
     } else {
-      const filteredList = todos.filter((todo) => todo.status === status);
+      const filteredList = todos.filter((todo: any) => todo.status === status);
       setFilteredtodos(filteredList);
     }
   };
 
-  //priority	フィルター処理
+  //priorityフィルター処理(or条件)
   const priorityFilter = (event: any) => {
     let priority = Number(event.target.value);
+    setPriorityval(priority);
+    setStatusval(0);
     if (priority === 0) {
+      //リセット
       setFilteredtodos(todos);
     } else {
       const filteredList = todos.filter(
@@ -211,6 +211,8 @@ const TodoTop = () => {
   //フィルターreset処理
   const resetFilter = () => {
     setFilteredtodos(todos);
+    setStatusval(0);
+    setPriorityval(0);
     setSearchTerm("");
   };
 
@@ -218,34 +220,36 @@ const TodoTop = () => {
     <Layout>
       <Box color={colorPrimary}>
         <Container maxW={"1080px"} position={"relative"} p={"0"}>
-          <IconButton
-            position={"absolute"}
-            top={"10px"}
-            right={"20px"}
-            rounded={"full"}
-            backgroundColor={"#40D1F1"}
-            border={"1px solid #B5B5B5"}
-            aria-label="button new"
-            icon={
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0.933716 4.5H11.9337V6.5H0.933716V4.5ZM0.933716 2.5H11.9337V0.5H0.933716V2.5ZM0.933716 10.5H7.93372V8.5H0.933716V10.5ZM15.9437 7.37L16.6537 6.66C17.0437 6.27 17.6737 6.27 18.0637 6.66L18.7737 7.37C19.1637 7.76 19.1637 8.39 18.7737 8.78L18.0637 9.49L15.9437 7.37ZM15.2337 8.08L9.93372 13.38V15.5H12.0537L17.3537 10.2L15.2337 8.08Z"
-                  fill="black"
-                />
-              </svg>
-            }
-          />
+          <Link href={"/todonew"}>
+            <IconButton
+              position={"absolute"}
+              top={"10px"}
+              right={"20px"}
+              rounded={"full"}
+              backgroundColor={"#40D1F1"}
+              border={"1px solid #B5B5B5"}
+              aria-label="button new"
+              icon={
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0.933716 4.5H11.9337V6.5H0.933716V4.5ZM0.933716 2.5H11.9337V0.5H0.933716V2.5ZM0.933716 10.5H7.93372V8.5H0.933716V10.5ZM15.9437 7.37L16.6537 6.66C17.0437 6.27 17.6737 6.27 18.0637 6.66L18.7737 7.37C19.1637 7.76 19.1637 8.39 18.7737 8.78L18.0637 9.49L15.9437 7.37ZM15.2337 8.08L9.93372 13.38V15.5H12.0537L17.3537 10.2L15.2337 8.08Z"
+                    fill="black"
+                  />
+                </svg>
+              }
+            />
+          </Link>
           <Heading fontSize={"28px"} m={"16px 0 16px 0"}>
             {"TODO LIST"}
           </Heading>
           <HStack spacing={"24px"} w={"container.md"}>
-            <Stack w={"190px"} h={"71px"}>
+            <Stack w={"450px"} h={"71px"}>
               <Text fontSize={"18px"} fontWeight={"bold"}>
                 SEARCH
               </Text>
@@ -256,11 +260,12 @@ const TodoTop = () => {
                   value={searchTerm}
                   onChange={handleSearch}
                 />
+
                 <InputRightElement pointerEvents="none">
                   <svg
-                    width="20"
-                    height="21"
-                    viewBox="0 0 20 21"
+                    width="16"
+                    height="16"
+                    viewBox="1 2 20 15"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -272,6 +277,19 @@ const TodoTop = () => {
                     />
                   </svg>
                 </InputRightElement>
+                <Button
+                  mr={3}
+                  ml={1}
+                  p={1}
+                  rounded={"full"}
+                  fontSize={"16px"}
+                  w={"140px"}
+                  type="button"
+                  bg="red.100"
+                  onClick={() => searchFilter()}
+                >
+                  Serch
+                </Button>
               </InputGroup>
             </Stack>
 
@@ -283,6 +301,7 @@ const TodoTop = () => {
                 borderColor={colorPrimary}
                 placeholder="- - - - - - -"
                 onChange={(e) => statusFilter(e)}
+                value={statusval}
               >
                 {statuslist.map((statusItem) => (
                   <option key={statusItem.id} value={statusItem.id}>
@@ -300,6 +319,7 @@ const TodoTop = () => {
                 borderColor={colorPrimary}
                 placeholder="- - - - - - -"
                 onChange={(e) => priorityFilter(e)}
+                value={priorityval}
               >
                 {prioritylist.map((priorityItem) => (
                   <option key={priorityItem.id} value={priorityItem.id}>
@@ -362,7 +382,7 @@ const TodoTop = () => {
                     >
                       <Td>
                         <Box w={"100%"} h={"100%"} px={"12px"} py={"18px"}>
-                          <Link href={"./todo_show/" + todo.todoid}>
+                          <Link href={todo.todoid + "/todo_show"}>
                             {todo.title}
                           </Link>
                         </Box>
@@ -426,7 +446,7 @@ const TodoTop = () => {
                       <Td>
                         <Box>
                           <HStack>
-                            <Link href={"./todoedit/" + todo.todoid}>
+                            <Link href={todo.todoid + "/todoedit/"}>
                               <Spacer px={"20px"}>
                                 <svg
                                   width="19"
@@ -460,12 +480,6 @@ const TodoTop = () => {
                                 </svg>
                               </Spacer>
                             </button>
-
-                            {/* <button
-                              onClick={() => statusChangeTodo(todo.todoid)}
-                            >
-                              4444
-                            </button> */}
                           </HStack>
                         </Box>
                       </Td>
