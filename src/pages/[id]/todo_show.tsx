@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
+import Link from 'next/link';
 
 function TodoShow() {
   type todos = {
@@ -74,17 +75,19 @@ function TodoShow() {
             >
               <P1>Comment</P1>
             </Button>
-            <Button
-              background="#95E3F4"
-              border="1px solid rgba(0, 0, 0, 0.8)"
-              box-sizing="border-box"
-              margin="24px 0px 0px 0px"
-              borderRadius="50px"
-              width="112px"
-              height="40px"
-            >
-              <P2>Back</P2>
-            </Button>
+            <Link href="/TodoTop">
+              <Button
+                background="#95E3F4"
+                border="1px solid rgba(0, 0, 0, 0.8)"
+                box-sizing="border-box"
+                margin="24px 0px 0px 0px"
+                borderRadius="50px"
+                width="112px"
+                height="40px"
+              >
+                <P2>Back</P2>
+              </Button>
+            </Link>
           </Box>
         </D1>
         <main>
