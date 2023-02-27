@@ -1,4 +1,4 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading, StatGroupProps } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
@@ -17,6 +17,7 @@ function TodoShow() {
   };
 
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+  const [id, setId] = useState<string>("");
 
   const router = useRouter();
 
@@ -27,6 +28,8 @@ function TodoShow() {
     if (typeof id !== "string") {
       return;
     }
+
+    setId(id);
 
     (async () => {
       const todoDocRef = doc(db, "todoposts", id);
@@ -101,30 +104,31 @@ function TodoShow() {
                   {todos.detail}
                 </P5>
                 <Box display="flex">
-                  <Button
-                    width="112px"
-                    height="40px"
-                    background="#95E3F4"
-                    border="1px solid #000000"
-                    borderRadius="50px"
-                    margin="18px 48px 0px 0px"
-                  >
-                    <P6>Edit</P6>
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 19 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                  <Link href={`/../${encodeURIComponent(id)}/todoedit`}>
+                    <Button
+                      width="112px"
+                      height="40px"
+                      background="#95E3F4"
+                      border="1px solid #000000"
+                      borderRadius="50px"
+                      margin="18px 48px 0px 0px"
                     >
-                      <path
-                        d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
-                        fill="black"
-                        fillOpacity="0.8"
-                      />
-                    </svg>
-                  </Button>
-
+                      <P6>Edit</P6>
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 19 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
+                          fill="black"
+                          fillOpacity="0.8"
+                        />
+                      </svg>
+                    </Button>
+                  </Link>
                   <Box margin="16px 48px 0px 0px">
                     <P7>Create</P7>
 
