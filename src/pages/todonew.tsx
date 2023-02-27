@@ -22,7 +22,7 @@ import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 
 
-const Todonew = () => {
+const TodoNew = () => {
 
   const [title,setTitle] = useState<string>('')
   const [detail,setDetail] = useState<string>('')
@@ -33,14 +33,15 @@ const Todonew = () => {
       const newTodoposts = doc(collection(db, "todoposts"));
       await setDoc(newTodoposts,
         {
-          uid:newTodoposts.id,
-          user_id:null,
+          uid:null,
+          todoid:newTodoposts.id,
           title: title,
           detail: detail,
-          status:null,
+          status:'Not Started',
           priority: priority,
           create: Timestamp.now(),
           update:Timestamp.now(),
+          comid:null
         }
       );
     } catch (e) {
@@ -97,7 +98,7 @@ const Todonew = () => {
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 PRIORITY
               </Text>
-              <RadioGroup>
+              <RadioGroup defaultValue="2">
                 <Stack direction="row" fontSize={"24px"} onChange={handleRadioButtonChange}>
                   <Radio value="1" >High</Radio>
                   <Radio value="2">Middle</Radio>
@@ -126,5 +127,5 @@ const Todonew = () => {
   );
 };
 
-export default Todonew;
+export default TodoNew;
 
