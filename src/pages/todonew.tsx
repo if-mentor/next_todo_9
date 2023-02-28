@@ -21,12 +21,11 @@ import {
 import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 
-
 const TodoNew = () => {
 
-  const [title,setTitle] = useState<string>('')
-  const [detail,setDetail] = useState<string>('')
-  const [priority,setPriority] = useState<number>(0)
+  const [title,setTitle] = useState<string>('');
+  const [detail,setDetail] = useState<string>('');
+  const [priority,setPriority] = useState<number>(3);
 
   const handleClick = async()=>{
     try {
@@ -37,13 +36,24 @@ const TodoNew = () => {
           todoid:newTodoposts.id,
           title: title,
           detail: detail,
-          status:'Not Started',
+          status:1,
           priority: priority,
           create: Timestamp.now(),
           update:Timestamp.now(),
           comid:null
         }
       );
+      console.log('Firestoreに保存されたデータ:', {
+        uid:null,
+        todoid:newTodoposts.id,
+        title: title,
+        detail: detail,
+        status:1,
+        priority: priority,
+        create: Timestamp.now(),
+        update:Timestamp.now(),
+        comid:null
+      });
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -98,7 +108,7 @@ const TodoNew = () => {
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 PRIORITY
               </Text>
-              <RadioGroup defaultValue="2">
+              <RadioGroup defaultValue="3">
                 <Stack direction="row" fontSize={"24px"} onChange={handleRadioButtonChange}>
                   <Radio value="1" >High</Radio>
                   <Radio value="2">Middle</Radio>
