@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState,ChangeEvent} from "react";
 import Layout from "@/components/Layout";
+
 
 //Chakra UI
 import {
@@ -17,7 +18,57 @@ import {
   Container,
 } from "@chakra-ui/react";
 
-const todonew = () => {
+import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
+import { db } from "@/libs/firebase";
+
+const TodoNew = () => {
+
+  const [title,setTitle] = useState<string>('');
+  const [detail,setDetail] = useState<string>('');
+  const [priority,setPriority] = useState<number>(3);
+
+  const handleClick = async()=>{
+    try {
+      const newTodoposts = doc(collection(db, "todoposts"));
+      await setDoc(newTodoposts,
+        {
+          uid:null,
+          todoid:newTodoposts.id,
+          title: title,
+          detail: detail,
+          status:1,
+          priority: priority,
+          create: Timestamp.now(),
+          update:Timestamp.now(),
+          comid:null
+        }
+      );
+      console.log('Firestoreに保存されたデータ:', {
+        uid:null,
+        todoid:newTodoposts.id,
+        title: title,
+        detail: detail,
+        status:1,
+        priority: priority,
+        create: Timestamp.now(),
+        update:Timestamp.now(),
+        comid:null
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  }
+  const handleTextareaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setDetail(event.target.value);
+  }
+  const handleRadioButtonChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPriority(Number(event.target.value));
+  }
+
   return (
     <div>
       <Layout>
@@ -48,17 +99,18 @@ const todonew = () => {
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 TITLE
               </Text>
-              <Input mb={5} type="text" placeholder="Text" />
+
+              <Input mb={5} type="text" placeholder="Text" onChange={handleInputChange} />
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 DETAIL
               </Text>
-              <Textarea mb={5} h="192px" placeholder="Text" />
+              <Textarea mb={5} h="192px" placeholder="Text" onChange={handleTextareaChange}/>
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 PRIORITY
               </Text>
-              <RadioGroup>
-                <Stack direction="row" fontSize={"24px"}>
-                  <Radio value="1">High</Radio>
+              <RadioGroup defaultValue="3">
+                <Stack direction="row" fontSize={"24px"} onChange={handleRadioButtonChange}>
+                  <Radio value="1" >High</Radio>
                   <Radio value="2">Middle</Radio>
                   <Radio value="3">Low</Radio>
                 </Stack>
@@ -72,6 +124,7 @@ const todonew = () => {
                   colorScheme="twitter"
                   type="submit"
                   borderRadius="full"
+                  onClick={()=>handleClick()}
                 >
                   CREATE
                 </Button>
@@ -84,4 +137,5 @@ const todonew = () => {
   );
 };
 
-export default todonew;
+export default TodoNew;
+
