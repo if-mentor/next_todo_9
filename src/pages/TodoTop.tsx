@@ -22,8 +22,38 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import Layout from "@/components/Layout";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/libs/firebase";
+import { useAtom } from "jotai";
+import { uidAtom } from "../atom";
 
 const TodoTop = () => {
+  const [count, setCount] = useAtom(uidAtom);
+  const [todos, setTodos] = useState([]);
+  useEffect(() => {
+    const array: any = [];
+    const querySnapshot = getDocs(collection(db, "todoposts"));
+    querySnapshot.then((ref: any) => {
+      ref.docs.map((doc: any) => {
+        array.push(doc);
+      });
+      setTodos(array);
+    });
+  }, []);
+  const [id, setId] = useState("");
+  const router = useRouter();
+  const handleClick = (e: any) => {
+    //console.log(e);
+    setCount(e);
+    count &&
+      router.push({
+        pathname: `/${count}/todoedit`,
+        query: { count: count },
+      });
+  };
+
   const bgcColorPrimary = "#95E3F4";
   const colorPrimary = "#000000CC";
 
@@ -50,39 +80,6 @@ const TodoTop = () => {
   const SButtonPageNext = styled(SButtonPage)`
     color: #b5b5b5;
   `;
-
-  const sampleTodos = [
-    {
-      id: 1,
-      task: "github上に静的サイトをホスティングする",
-      status: "NOT STARTED",
-    },
-    {
-      id: 2,
-      task: "ReactでTodoサイトを作成する",
-      status: "DOING",
-    },
-    {
-      id: 3,
-      task: "Firestore Hostingを学習する",
-      status: "DONE",
-    },
-    {
-      id: 4,
-      task: "感謝の正拳突き",
-      status: "DOING",
-    },
-    {
-      id: 5,
-      task: "二重の極み",
-      status: "DONE",
-    },
-    {
-      id: 6,
-      task: "魔封波",
-      status: "DOING",
-    },
-  ];
 
   return (
     <Layout>
@@ -203,11 +200,11 @@ const TodoTop = () => {
                 </Tr>
               </Thead>
               <Tbody fontWeight={"bold"}>
-                {sampleTodos.map((sampleTodo) => {
+                {todos?.map((todo) => {
                   let statusFontSize = "18px";
                   let statusBorderColor = "#023945";
                   let statusBackgroundColor = "#F0FCFF";
-                  switch (sampleTodo.status) {
+                  switch (todo?.status) {
                     case "NOT STARTED":
                       statusFontSize = "12px";
                       statusBorderColor = "#001F2B";
@@ -225,13 +222,13 @@ const TodoTop = () => {
 
                   return (
                     <Tr
-                      key={sampleTodo.id}
+                      key={todo?.id}
                       sx={{ td: { padding: 0 } }}
                       height={"56px"}
                     >
                       <Td>
                         <Box w={"100%"} h={"100%"} px={"12px"} py={"18px"}>
-                          {sampleTodo.task}
+                          {todo.data()?.title}
                         </Box>
                       </Td>
                       <Td>
@@ -250,7 +247,7 @@ const TodoTop = () => {
                             borderColor={statusBorderColor}
                             backgroundColor={statusBackgroundColor}
                           >
-                            {sampleTodo.status}
+                            {todo?.status}
                           </Button>
                         </Box>
                       </Td>
@@ -260,48 +257,42 @@ const TodoTop = () => {
                           w={"100%"}
                           textAlign="center"
                         >
-                          <Select
+                          {/* <Select
                             display={"inline-block"}
                             w={"112px"}
                             borderColor={"#30494F"}
                           >
-                            <option value="option1">High</option>
+                            <Option value="option1">High</Option>
                             <option value="option2">Middle</option>
                             <option value="option3">Low</option>
-                          </Select>
+                          </Select> */}
                         </Box>
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
                         2020-11-8 18:55
                       </Td>
-                      <Td
-                        p={0}
-                        fontSize={"14px"}
-                        textAlign={"center"}
-                      >
+                      <Td p={0} fontSize={"14px"} textAlign={"center"}>
                         2020-11-8 18:55
                       </Td>
                       <Td>
                         <Box px={"20px"}>
                           <HStack>
                             <Spacer />
-                            <svg
-                              width="19"
-                              height="18"
-                              viewBox="0 0 19 18"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
-                                fill="black"
-                                fillOpacity="0.8"
-                              />
-                            </svg>
+                            <Button onClick={() => handleClick(todo?.id)}>
+                              <svg
+                                width="19"
+                                height="18"
+                                viewBox="0 0 19 18"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
+                                  fill="black"
+                                  fillOpacity="0.8"
+                                />
+                              </svg>
+                            </Button>
                             <Spacer />
                             <svg
                               width="14"

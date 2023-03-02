@@ -1,0 +1,147 @@
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Text,
+  Flex,
+  Spacer,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
+import Layout from "@/components/Layout";
+import styled from "@emotion/styled";
+import { useRouter } from "next/router";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "../../libs/firebase";
+import { formatDateStr } from "@/utils";
+function TodoEdit() {
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [docData, setDocData] = useState({});
+  const [detail, setDetail] = useState("");
+  const [createData, setCreateData] = useState("");
+  const [updateData, setUpdateData] = useState("");
+  //console.log(router.query.count);
+  useEffect(() => {
+    (async () => {
+      //データを新しく取得
+      const docref = await doc(db, "todoposts", router.query.count);
+      const docsnap = await getDoc(docref);
+      const array = { ...docsnap.data() };
+      array && setDocData(array);
+      setDetail(array.detail);
+      setTitle(array.title);
+      const create = formatDateStr(array.create.seconds);
+      create && setCreateData(create);
+      const update = formatDateStr(array.update.seconds);
+      update && setUpdateData(update);
+    })();
+  }, []);
+  const submitTitle = (e) => {
+    setTitle(e.target.value);
+  };
+  const submitDetail = (e) => {
+    setDetail(e.target.value);
+  };
+  const back = () => {
+    router.push({
+      pathname: "/TodoTop",
+    });
+  };
+  const submitUpdate = () => {
+    //データ追加
+    const cityRef = doc(db, "todoposts", router.query.count);
+    setDoc(
+      cityRef,
+      { title: title, detail: detail, update: serverTimestamp() },
+      { merge: true }
+    );
+
+    router.push({
+      pathname: "/TodoTop",
+    });
+  };
+  return (
+    <>
+      <Layout>
+        <Container>
+          <Flex mb="10px">
+            <Box fontSize="25px">EDIT TODO</Box>
+            <Spacer />
+            <Button
+              bg="#95e3f4"
+              size="sm"
+              p="0 20px"
+              border="1px solid black"
+              borderRadius="15px"
+              w="100px"
+              onClick={back}
+            >
+              Back
+            </Button>
+          </Flex>
+
+          <Text fontSize="24px">TITLE</Text>
+          <Input
+            type="text"
+            name={title}
+            value={title}
+            onChange={submitTitle}
+            width="1080px"
+            height="71px"
+          />
+
+          <Text fontSize="24px">DETAIL</Text>
+          <Textarea
+            type="text"
+            value={detail}
+            name={detail}
+            onChange={submitDetail}
+            width="1080px"
+            height="287px"
+          />
+
+          <Flex>
+            <Box>
+              <Text fontSize="md" marginTop="10px">
+                Create
+              </Text>
+              <Text fontSize="lg">{createData}</Text>
+            </Box>
+            <Box margin="0 30px">
+              <Text fontSize="md" marginTop="10px">
+                Update
+              </Text>
+              <Text fontSize="lg">{updateData}</Text>
+            </Box>
+            <Spacer />
+            <Button
+              bg="#40D1F1"
+              size="sm"
+              p="0 20px"
+              border="1px solid black"
+              borderRadius="15px"
+              color="White"
+              w="100px"
+              marginTop="24px"
+              onClick={submitUpdate}
+            >
+              UPDATE
+            </Button>
+          </Flex>
+        </Container>
+      </Layout>
+    </>
+  );
+}
+
+export default TodoEdit;
+
+const Container = styled.div`
+  font-weight: bold;
+  padding: 20px 0;
+  margin: 0 auto;
+  width: 100%;
+  min-width: 150px;
+  max-width: 1080px;
+`;
