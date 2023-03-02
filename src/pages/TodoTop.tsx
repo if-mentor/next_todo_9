@@ -172,6 +172,8 @@ const TodoTop = () => {
   const searchFilter = () => {
     //初期状態
     setFilteredtodos(todos);
+    setPriorityval(0);
+    setStatusval(0);
     const filteredList = todos.filter((item: any) =>
       item.title.toLowerCase().includes(searchTerm)
     );
@@ -183,6 +185,7 @@ const TodoTop = () => {
     let status = Number(event.target.value);
     setStatusval(status);
     setPriorityval(0);
+    setSearchTerm("");
     if (status === 0) {
       //リセット
       setFilteredtodos(todos);
@@ -197,6 +200,7 @@ const TodoTop = () => {
     let priority = Number(event.target.value);
     setPriorityval(priority);
     setStatusval(0);
+    setSearchTerm("");
     if (priority === 0) {
       //リセット
       setFilteredtodos(todos);
@@ -249,7 +253,7 @@ const TodoTop = () => {
             {"TODO LIST"}
           </Heading>
           <HStack spacing={"24px"} w={"container.md"}>
-            <Stack w={"450px"} h={"71px"}>
+            <Stack w={"490px"} h={"71px"}>
               <Text fontSize={"18px"} fontWeight={"bold"}>
                 SEARCH
               </Text>
@@ -261,35 +265,33 @@ const TodoTop = () => {
                   onChange={handleSearch}
                 />
 
-                <InputRightElement pointerEvents="none">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="1 2 20 15"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M15.0001 8.50005C15.0001 12.0899 12.0899 15.0001 8.50005 15.0001C4.91017 15.0001 2 12.0899 2 8.50005C2 4.91017 4.91017 2 8.50005 2C12.0899 2 15.0001 4.91017 15.0001 8.50005ZM13.3876 15.4552C12.0051 16.4286 10.3193 17.0001 8.50005 17.0001C3.8056 17.0001 0 13.1945 0 8.50005C0 3.8056 3.8056 0 8.50005 0C13.1945 0 17.0001 3.8056 17.0001 8.50005C17.0001 10.6537 16.1991 12.6203 14.8789 14.1181L19.2068 18.4503C19.5971 18.841 19.5971 19.4745 19.2068 19.8652C18.8165 20.2559 18.1836 20.2559 17.7933 19.8652L13.3876 15.4552Z"
-                      fill="#C2C2C2"
-                    />
-                  </svg>
+                <InputRightElement width="4rem">
+                  <IconButton
+                    position={"absolute"}
+                    rounded={"full"}
+                    backgroundColor={"red.100"}
+                    aria-label="SEARCH"
+                    onClick={() => searchFilter()}
+                    w={50}
+                    h={"30px"}
+                    icon={
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 2 20 15"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M15.0001 8.50005C15.0001 12.0899 12.0899 15.0001 8.50005 15.0001C4.91017 15.0001 2 12.0899 2 8.50005C2 4.91017 4.91017 2 8.50005 2C12.0899 2 15.0001 4.91017 15.0001 8.50005ZM13.3876 15.4552C12.0051 16.4286 10.3193 17.0001 8.50005 17.0001C3.8056 17.0001 0 13.1945 0 8.50005C0 3.8056 3.8056 0 8.50005 0C13.1945 0 17.0001 3.8056 17.0001 8.50005C17.0001 10.6537 16.1991 12.6203 14.8789 14.1181L19.2068 18.4503C19.5971 18.841 19.5971 19.4745 19.2068 19.8652C18.8165 20.2559 18.1836 20.2559 17.7933 19.8652L13.3876 15.4552Z"
+                          fill="#C2C2C2"
+                        />
+                      </svg>
+                    }
+                  />
                 </InputRightElement>
-                <Button
-                  mr={3}
-                  ml={1}
-                  p={1}
-                  rounded={"full"}
-                  fontSize={"16px"}
-                  w={"140px"}
-                  type="button"
-                  bg="red.100"
-                  onClick={() => searchFilter()}
-                >
-                  Serch
-                </Button>
               </InputGroup>
             </Stack>
 
