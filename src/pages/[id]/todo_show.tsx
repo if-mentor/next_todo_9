@@ -1,4 +1,4 @@
-import { Box, Button, Heading, StatGroupProps } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
@@ -9,6 +9,9 @@ import { formatDateStr } from "@/utils";
 import Link from 'next/link';
 
 function TodoShow() {
+  const router = useRouter();
+  const id = router.query.id as string;
+
   type todos = {
     title: string
     detail: string,
@@ -17,37 +20,29 @@ function TodoShow() {
   };
 
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
-  const [id, setId] = useState<string>("");
-
-  const router = useRouter();
 
   useEffect(() => {
     if (!router.isReady) return;
-    let { id } = router.query;
 
-    if (typeof id !== "string") {
-      return;
+    if (id) {
+      (async () => {
+        const todoDocRef = doc(db, "todoposts", id);
+        const todoDocSnap = await getDoc(todoDocRef);
+        const todoDocObj = todoDocSnap.data();
+
+        if (todoDocObj) {
+          const create = formatDateStr(todoDocObj.create.seconds);
+          const update = formatDateStr(todoDocObj.update.seconds);
+
+          setTodos({
+            title: todoDocObj.title,
+            detail: todoDocObj.detail,
+            create,
+            update,
+          });
+        }
+      })();
     }
-
-    setId(id);
-
-    (async () => {
-      const todoDocRef = doc(db, "todoposts", id);
-      const todoDocSnap = await getDoc(todoDocRef);
-      const todoDocObj = todoDocSnap.data();
-
-      if (todoDocObj) {
-        const create = formatDateStr(todoDocObj.create.seconds);
-        const update = formatDateStr(todoDocObj.update.seconds);
-
-        setTodos({
-          title: todoDocObj.title,
-          detail: todoDocObj.detail,
-          create,
-          update,
-        });
-      }
-    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
@@ -103,7 +98,7 @@ function TodoShow() {
                 {todos.detail}
               </P5>
               <Box display="flex">
-                <Link href={`/../${encodeURIComponent(id)}/todoedit`}>
+                <Link href={`/${id}/todoedit`}>
                   <Button
                     width="112px"
                     height="40px"
