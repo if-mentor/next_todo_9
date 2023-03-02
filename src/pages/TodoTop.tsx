@@ -30,15 +30,6 @@ import { userAtom } from "../atom";
 const TodoTop = () => {
   const bgcColorPrimary = "#95E3F4";
   const colorPrimary = "#000000CC";
-  const [userInfo] = useAtom(userAtom);
-  const router = useRouter();
-
-  //最初に開いた時にuserInfoがないときはログインに遷移させる
-  useEffect(() => {
-    if (!userInfo.id) {
-      router.push("/login");
-    }
-  }, []);
 
   const STh = styled(Th)`
     color: ${colorPrimary};

@@ -11,22 +11,23 @@ import { userAtom } from "../atom";
 const login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userInfo, setUserInfo] = useAtom(userAtom);
+  // const [userInfo, setUserInfo] = useAtom(userAtom);
   const router = useRouter();
 
   //最初に開いた時にuserInfoがあるときはトップに遷移させる
-  useEffect(() => {
-    if (userInfo.id) {
-      router.push("/TodoTop");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (userInfo.id) {
+  //     router.push("/TodoTop");
+  //   }
+  // }, []);
 
   const onClickLogin = async () => {
     try {
       //firebase宛にemail、passwordを送り、ログイン認証をする。
       const user = await signInWithEmailAndPassword(auth, email, password);
       //Context宛にemail、passwordを送り、ユーザー情報を保管する。
-      setUserInfo({ id: user.user.uid });
+      // setUserInfo({ id: user.user.uid });
+      localStorage.setItem("userId", user.user.uid);
       //ログイン画面からTODO一覧に自動遷移させる
       router.push("/TodoTop");
     } catch (e) {
