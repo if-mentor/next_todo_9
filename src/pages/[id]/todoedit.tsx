@@ -29,32 +29,18 @@ function TodoEdit() {
   //console.log(router.query.count);
   useEffect(() => {
     (async () => {
-      //データを新しく取得
-      if (count !== "") {
-        const docref = await doc(db, "todoposts", count);
-        const docsnap = await getDoc(docref);
-        const array = { ...docsnap.data() };
-        array && setDocData(array);
-        setDetail(array.detail);
-        setTitle(array.title);
-        const create = formatDateStr(array.create.seconds);
-        create && setCreateData(create);
-        const update = formatDateStr(array.update.seconds);
-        update && setUpdateData(update);
-      } else {
-        setCount(window.location.pathname.slice(1, 21));
-        const docID = window.location.pathname.slice(1, 21);
-        const docref = await doc(db, "todoposts", docID);
-        const docsnap = await getDoc(docref);
-        const array = { ...docsnap.data() };
-        array && setDocData(array);
-        setDetail(array.detail);
-        setTitle(array.title);
-        const create = formatDateStr(array.create.seconds);
-        create && setCreateData(create);
-        const update = formatDateStr(array.update.seconds);
-        update && setUpdateData(update);
-      }
+      setCount(window.location.pathname.slice(1, 21));
+      const docID = window.location.pathname.slice(1, 21);
+      const docref = await doc(db, "todoposts", docID);
+      const docsnap = await getDoc(docref);
+      const array = { ...docsnap.data() };
+      array && setDocData(array);
+      setDetail(array.detail);
+      setTitle(array.title);
+      const create = formatDateStr(array.create.seconds);
+      create && setCreateData(create);
+      const update = formatDateStr(array.update.seconds);
+      update && setUpdateData(update);
     })();
   }, []);
   const submitTitle = (e: any) => {
