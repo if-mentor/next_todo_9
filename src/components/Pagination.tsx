@@ -25,64 +25,92 @@ export const Pagination = (props: any) => {
   `;
 
   const pages = Math.ceil(props.totalCount / props.PER_PAGE);
-  console.log(props.totalCount + "inpagination");
-  console.log(props.pageId + "inpagination");
-  console.log(pages);
+  console.log(props.totalCount + "トータル記事数");
+  console.log(props.currentPage + "現在のページ");
 
-  if (pages > 1) {
-    if (pages <= 6) {
-      return (
-        // <HStack justifyContent={"center"} marginTop={"16px"}>
-        //   {range(1, pages).map((number, index) => {
-        //     if (index = props.pageId - 1) {
-        //       return <SButtonPage key={index}>{number}</SButtonPage>;
-        //     } else {
-        //       return (
-        //         <SButtonPage key={index}>
-        //           <Link href={`/page/${number}`}>{number}</Link>
-        //         </SButtonPage>
-        //       );
-        //     }
-        //   })}
-        // </HStack>
+  return (
+    <>
+      {pages > 1 && (
         <HStack justifyContent={"center"} marginTop={"16px"}>
+          <SButtonPage
+            onClick={() => props.setCurrentPage(props.currentPage - 1)}
+          >
+            ＜
+          </SButtonPage>
           {range(1, pages).map((number, index) => {
             return (
               <SButtonPage
                 key={index}
-                onClick={() => props.setCurrentPage({ number })}
+                onClick={() => props.setCurrentPage(number)}
               >
                 {number}
               </SButtonPage>
             );
           })}
+          <SButtonPage
+            onClick={() => props.setCurrentPage(props.currentPage - 1)}
+          >
+            ＞
+          </SButtonPage>
         </HStack>
-      );
-    } else {
-      //   if (props.pageId) {
-      //     return (
-      //       <HStack justifyContent={"center"} marginTop={"16px"}>
-      //         <SButtonPage>
-      //           <Link href={`/page/${props.pageId}`}>{props.pageId}</Link>
-      //         </SButtonPage>
-      //       </HStack>
-      //     );
-      //   } else {
-      //     return (
-      //       <HStack justifyContent={"center"} marginTop={"16px"}>
-      //         <SButtonPage>
-      //           <Link href={`/page/1`}>1</Link>
-      //         </SButtonPage>
-      //         <SButtonPage>
-      //           <Link href={`/page/2`}>2</Link>
-      //         </SButtonPage>
-      //         <SButtonPage>
-      //           <Link href={`/page/3`}>3</Link>
-      //         </SButtonPage>
-      //         <SButtonPage>…</SButtonPage>
-      //       </HStack>
-      //     );
-      //   }
-    }
-  }
+      )}
+    </>
+  );
+
+  // if (pages > 1) {
+  //   if (pages <= 6) {
+  //     return (
+  //       // <HStack justifyContent={"center"} marginTop={"16px"}>
+  //       //   {range(1, pages).map((number, index) => {
+  //       //     if (index = props.pageId - 1) {
+  //       //       return <SButtonPage key={index}>{number}</SButtonPage>;
+  //       //     } else {
+  //       //       return (
+  //       //         <SButtonPage key={index}>
+  //       //           <Link href={`/page/${number}`}>{number}</Link>
+  //       //         </SButtonPage>
+  //       //       );
+  //       //     }
+  //       //   })}
+  //       // </HStack>
+  //       <HStack justifyContent={"center"} marginTop={"16px"}>
+  //         {range(1, pages).map((number, index) => {
+  //           return (
+  //             <SButtonPage
+  //               key={index}
+  //               onClick={() => props.setCurrentPage({ number })}
+  //             >
+  //               {number}
+  //             </SButtonPage>
+  //           );
+  //         })}
+  //       </HStack>
+  //     );
+  //   } else {
+  //     //   if (props.pageId) {
+  //     //     return (
+  //     //       <HStack justifyContent={"center"} marginTop={"16px"}>
+  //     //         <SButtonPage>
+  //     //           <Link href={`/page/${props.pageId}`}>{props.pageId}</Link>
+  //     //         </SButtonPage>
+  //     //       </HStack>
+  //     //     );
+  //     //   } else {
+  //     //     return (
+  //     //       <HStack justifyContent={"center"} marginTop={"16px"}>
+  //     //         <SButtonPage>
+  //     //           <Link href={`/page/1`}>1</Link>
+  //     //         </SButtonPage>
+  //     //         <SButtonPage>
+  //     //           <Link href={`/page/2`}>2</Link>
+  //     //         </SButtonPage>
+  //     //         <SButtonPage>
+  //     //           <Link href={`/page/3`}>3</Link>
+  //     //         </SButtonPage>
+  //     //         <SButtonPage>…</SButtonPage>
+  //     //       </HStack>
+  //     //     );
+  //     //   }
+  //   }
+  // }
 };

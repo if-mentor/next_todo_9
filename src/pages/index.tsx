@@ -93,7 +93,7 @@ const TodoTop = () => {
   const [statusval, setStatusval] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pagedTodos, setPagedTodos] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   //データ取得
   const arrList: any = [];
@@ -138,16 +138,17 @@ const TodoTop = () => {
 
   useEffect(() => {
     setTotalCount(filteredtodos.length);
+    setPagedTodos(filteredtodos.slice(0, postPerPage));
   }, [filteredtodos]);
 
   useEffect(() => {
     const startTodo = (currentPage - 1) * postPerPage;
     const endTodo = (currentPage - 1) * postPerPage + postPerPage;
     setPagedTodos(filteredtodos.slice(startTodo, endTodo));
-    console.log(totalCount);
-    console.log(currentPage);
   }, [currentPage]);
-
+  useEffect(() => {
+    console.log(pagedTodos + "そのページに表示される記事の配列");
+  });
   //削除処理
   const deleteTodo = async (docId: string) => {
     await deleteDoc(doc(db, "todoposts", docId));
