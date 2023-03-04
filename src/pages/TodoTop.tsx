@@ -27,10 +27,10 @@ import { useRouter } from "next/router";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { useAtom } from "jotai";
-import { uidAtom } from "../atom";
+import { docId } from "../atom";
 
 const TodoTop = () => {
-  const [count, setCount] = useAtom(uidAtom);
+  const [count, setCount] = useAtom(docId);
   const [todos, setTodos] = useState([]);
   useEffect(() => {
     const array: any = [];

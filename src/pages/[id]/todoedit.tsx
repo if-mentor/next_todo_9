@@ -14,6 +14,9 @@ import { useRouter } from "next/router";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../libs/firebase";
 import { formatDateStr } from "@/utils";
+import { docId } from "../../atom";
+import { useAtom } from "jotai";
+
 function TodoEdit() {
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -21,26 +24,43 @@ function TodoEdit() {
   const [detail, setDetail] = useState("");
   const [createData, setCreateData] = useState("");
   const [updateData, setUpdateData] = useState("");
+  const [count, setCount] = useAtom(docId);
+
   //console.log(router.query.count);
   useEffect(() => {
     (async () => {
       //データを新しく取得
-      const docref = await doc(db, "todoposts", router.query.count);
-      const docsnap = await getDoc(docref);
-      const array = { ...docsnap.data() };
-      array && setDocData(array);
-      setDetail(array.detail);
-      setTitle(array.title);
-      const create = formatDateStr(array.create.seconds);
-      create && setCreateData(create);
-      const update = formatDateStr(array.update.seconds);
-      update && setUpdateData(update);
+      if (count !== "") {
+        const docref = await doc(db, "todoposts", count);
+        const docsnap = await getDoc(docref);
+        const array = { ...docsnap.data() };
+        array && setDocData(array);
+        setDetail(array.detail);
+        setTitle(array.title);
+        const create = formatDateStr(array.create.seconds);
+        create && setCreateData(create);
+        const update = formatDateStr(array.update.seconds);
+        update && setUpdateData(update);
+      } else {
+        setCount(window.location.pathname.slice(1, 21));
+        const docID = window.location.pathname.slice(1, 21);
+        const docref = await doc(db, "todoposts", docID);
+        const docsnap = await getDoc(docref);
+        const array = { ...docsnap.data() };
+        array && setDocData(array);
+        setDetail(array.detail);
+        setTitle(array.title);
+        const create = formatDateStr(array.create.seconds);
+        create && setCreateData(create);
+        const update = formatDateStr(array.update.seconds);
+        update && setUpdateData(update);
+      }
     })();
   }, []);
-  const submitTitle = (e) => {
+  const submitTitle = (e: any) => {
     setTitle(e.target.value);
   };
-  const submitDetail = (e) => {
+  const submitDetail = (e: any) => {
     setDetail(e.target.value);
   };
   const back = () => {
@@ -50,7 +70,7 @@ function TodoEdit() {
   };
   const submitUpdate = () => {
     //データ追加
-    const cityRef = doc(db, "todoposts", router.query.count);
+    const cityRef = doc(db, "todoposts", count);
     setDoc(
       cityRef,
       { title: title, detail: detail, update: serverTimestamp() },
@@ -93,7 +113,6 @@ function TodoEdit() {
 
           <Text fontSize="24px">DETAIL</Text>
           <Textarea
-            type="text"
             value={detail}
             name={detail}
             onChange={submitDetail}
