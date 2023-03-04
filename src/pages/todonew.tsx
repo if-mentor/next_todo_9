@@ -1,6 +1,6 @@
-import React, { useState,ChangeEvent} from "react";
+import React, { useState,ChangeEvent } from "react";
 import Layout from "@/components/Layout";
-
+import NextLink from "next/link";
 
 //Chakra UI
 import {
@@ -16,6 +16,7 @@ import {
   Box,
   Flex,
   Container,
+  Link
 } from "@chakra-ui/react";
 
 import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
@@ -43,17 +44,6 @@ const TodoNew = () => {
           comid:null
         }
       );
-      console.log('Firestoreに保存されたデータ:', {
-        uid:null,
-        todoid:newTodoposts.id,
-        title: title,
-        detail: detail,
-        status:1,
-        priority: priority,
-        create: Timestamp.now(),
-        update:Timestamp.now(),
-        comid:null
-      });
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -85,6 +75,7 @@ const TodoNew = () => {
                     NEW TODO
                   </FormLabel>
                 </Box>
+                <Link as={NextLink} href="/index">
                 <Box textAlign={"right"}>
                   <Button
                     bg="#95E3F4"
@@ -95,6 +86,7 @@ const TodoNew = () => {
                     Back
                   </Button>
                 </Box>
+                </Link>
               </Flex>
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 TITLE
