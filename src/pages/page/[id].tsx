@@ -9,37 +9,26 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 import styled from "@emotion/styled";
 import {
-  Stack,
-  HStack,
-  Text,
-  Input,
-  Select,
-  Button,
   IconButton,
   Box,
-  Spacer,
   Container,
-  InputGroup,
-  InputRightElement,
   Heading,
   Table,
   Thead,
-  Tbody,
   Tr,
   Th,
-  Td,
   TableContainer,
 } from "@chakra-ui/react";
 import Layout from "@/components/Layout";
 import TodoList from "@/components/TodoList";
 import { Pagination } from "@/components/Pagination";
 import { useAtom } from "jotai";
-import { todoAtom } from "../atom.js";
+import { todoAtom } from "../../atom.js";
 
-const TodoTop = () => {
+const PagedTodoTop = () => {
   const postPerPage = 6;
   const bgcColorPrimary = "#95E3F4";
   const colorPrimary = "#000000CC";
@@ -86,17 +75,17 @@ const TodoTop = () => {
 
   //useState設定
   const [todos, setTodos] = useState<string[]>([]);
-  const [filteredtodos, setFilteredtodos] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredtodos, setFilteredtodos] = useAtom<string[]>(todoAtom);
   const [isEdit, setIsEdit] = useState(false);
   const [priorityval, setPriorityval] = useState<number>(0);
   const [statusval, setStatusval] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pagedTodos, setPagedTodos] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(0);
 
   //データ取得
+  const router = useRouter();
   const arrList: any = [];
+  const pageId: any = Number(router.query.id);
   useEffect(() => {
     const fireStorePostData = collection(db, "todoposts");
     getDocs(fireStorePostData).then((snapShot) => {
@@ -141,12 +130,12 @@ const TodoTop = () => {
   }, [filteredtodos]);
 
   useEffect(() => {
-    const startTodo = (currentPage - 1) * postPerPage;
-    const endTodo = (currentPage - 1) * postPerPage + postPerPage;
+    const startTodo = (pageId - 1) * postPerPage;
+    const endTodo = (pageId - 1) * postPerPage + postPerPage;
     setPagedTodos(filteredtodos.slice(startTodo, endTodo));
     console.log(totalCount);
-    console.log(currentPage);
-  }, [currentPage]);
+    console.log(pageId);
+  }, [pageId]);
 
   //削除処理
   const deleteTodo = async (docId: string) => {
@@ -163,62 +152,6 @@ const TodoTop = () => {
     });
 
     setIsEdit(true);
-  };
-
-  //検索処理
-  const handleSearch = (event: any) => {
-    const searchTerm = event.target.value.toLowerCase();
-    setSearchTerm(searchTerm);
-  };
-  const searchFilter = () => {
-    //初期状態
-    setFilteredtodos(todos);
-    setPriorityval(0);
-    setStatusval(0);
-    const filteredList = todos.filter((item: any) =>
-      item.title.toLowerCase().includes(searchTerm)
-    );
-    setFilteredtodos(filteredList);
-  };
-
-  //statusフィルター処理(or条件)
-  const statusFilter = (event: any) => {
-    let status = Number(event.target.value);
-    setStatusval(status);
-    setPriorityval(0);
-    setSearchTerm("");
-    if (status === 0) {
-      //リセット
-      setFilteredtodos(todos);
-    } else {
-      const filteredList = todos.filter((todo: any) => todo.status === status);
-      setFilteredtodos(filteredList);
-    }
-  };
-
-  //priorityフィルター処理(or条件)
-  const priorityFilter = (event: any) => {
-    let priority = Number(event.target.value);
-    setPriorityval(priority);
-    setStatusval(0);
-    setSearchTerm("");
-    if (priority === 0) {
-      //リセット
-      setFilteredtodos(todos);
-    } else {
-      const filteredList = todos.filter(
-        (todo: any) => todo.priority === priority
-      );
-      setFilteredtodos(filteredList);
-    }
-  };
-
-  //フィルターreset処理
-  const resetFilter = () => {
-    setFilteredtodos(todos);
-    setStatusval(0);
-    setPriorityval(0);
-    setSearchTerm("");
   };
 
   return (
@@ -253,98 +186,6 @@ const TodoTop = () => {
           <Heading fontSize={"28px"} m={"16px 0 16px 0"}>
             {"TODO LIST"}
           </Heading>
-          <HStack spacing={"24px"} w={"container.md"}>
-            <Stack w={"490px"} h={"71px"}>
-              <Text fontSize={"18px"} fontWeight={"bold"}>
-                SEARCH
-              </Text>
-              <InputGroup>
-                <Input
-                  type="text"
-                  borderColor={colorPrimary}
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-
-                <InputRightElement width="4rem">
-                  <IconButton
-                    position={"absolute"}
-                    rounded={"full"}
-                    backgroundColor={"red.100"}
-                    aria-label="SEARCH"
-                    onClick={() => searchFilter()}
-                    w={50}
-                    h={"30px"}
-                    icon={
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 2 20 15"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M15.0001 8.50005C15.0001 12.0899 12.0899 15.0001 8.50005 15.0001C4.91017 15.0001 2 12.0899 2 8.50005C2 4.91017 4.91017 2 8.50005 2C12.0899 2 15.0001 4.91017 15.0001 8.50005ZM13.3876 15.4552C12.0051 16.4286 10.3193 17.0001 8.50005 17.0001C3.8056 17.0001 0 13.1945 0 8.50005C0 3.8056 3.8056 0 8.50005 0C13.1945 0 17.0001 3.8056 17.0001 8.50005C17.0001 10.6537 16.1991 12.6203 14.8789 14.1181L19.2068 18.4503C19.5971 18.841 19.5971 19.4745 19.2068 19.8652C18.8165 20.2559 18.1836 20.2559 17.7933 19.8652L13.3876 15.4552Z"
-                          fill="#C2C2C2"
-                        />
-                      </svg>
-                    }
-                  />
-                </InputRightElement>
-              </InputGroup>
-            </Stack>
-
-            <Stack w={"190px"} h={"71px"}>
-              <Text fontSize={"18px"} fontWeight={"bold"}>
-                STATUS
-              </Text>
-              <Select
-                borderColor={colorPrimary}
-                placeholder="- - - - - - -"
-                onChange={(e) => statusFilter(e)}
-                value={statusval}
-              >
-                {statuslist.map((statusItem) => (
-                  <option key={statusItem.id} value={statusItem.id}>
-                    {statusItem.status}
-                  </option>
-                ))}
-              </Select>
-            </Stack>
-
-            <Stack w={"190px"} h={"71px"}>
-              <Text fontSize={"18px"} fontWeight={"bold"}>
-                PRIORITY
-              </Text>
-              <Select
-                borderColor={colorPrimary}
-                placeholder="- - - - - - -"
-                onChange={(e) => priorityFilter(e)}
-                value={priorityval}
-              >
-                {prioritylist.map((priorityItem) => (
-                  <option key={priorityItem.id} value={priorityItem.id}>
-                    {priorityItem.priority}
-                  </option>
-                ))}
-              </Select>
-            </Stack>
-
-            <Stack w={"104px"} alignContent={"flex-end"} h={"71px"}>
-              <Spacer />
-              <Button
-                rounded={"full"}
-                fontSize={"18px"}
-                w={"104px"}
-                backgroundColor={"#B0C6CB"}
-                onClick={() => resetFilter()}
-              >
-                RESET
-              </Button>
-            </Stack>
-          </HStack>
           <TableContainer marginTop={"33px"}>
             <Table variant="simple" maxW={"100%"} overflow={"none"}>
               <Thead background={bgcColorPrimary}>
@@ -383,8 +224,7 @@ const TodoTop = () => {
           <Pagination
             totalCount={totalCount}
             PER_PAGE={postPerPage}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
+            pageId={pageId}
           />
         </Container>
       </Box>
@@ -392,4 +232,4 @@ const TodoTop = () => {
   );
 };
 
-export default TodoTop;
+export default PagedTodoTop;
