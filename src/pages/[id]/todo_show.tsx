@@ -15,7 +15,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
-import { collection, doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, Timestamp, query, where, orderBy, CollectionReference } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
 import Link from 'next/link';
@@ -31,12 +31,36 @@ function TodoShow() {
     update: string,
   };
 
+  type comments = {
+    uid: string
+    todoid: string,
+    comid: string,
+    uname: string,
+    comdetail: string,
+    create: Timestamp
+  };
+
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+  const [comments, setComments] = useState<comments[]>([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [uname, setUname] = useState<string>("");
   const [comdetail, setComdetail] = useState<string>("");
+
+
+  const fetchComment = async () => {
+    const commentCollection = collection(db, "comment") as CollectionReference<comments>;
+    const commentQuery = query(commentCollection, where("todoid", "==", id), orderBy("create", "desc"));
+    const commentDocsSnap = await getDocs(commentQuery);
+
+    const commentList: comments[] = [];
+    commentDocsSnap.forEach((doc) => {
+      commentList.push(doc.data());
+    });
+
+    setComments(commentList);
+  }
 
   const addComment = async () => {
     try {
@@ -53,6 +77,7 @@ function TodoShow() {
       );
 
       onClose();
+      fetchComment();
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -79,6 +104,8 @@ function TodoShow() {
           });
         }
       })();
+
+      fetchComment();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
@@ -177,36 +204,15 @@ function TodoShow() {
               </Box>
             </D2>
             <Box marginTop="14px" width="472px">
-              <D3>
-                <D4>
-                  <P10>ジョン</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D3>
-              <D3>
-                <D4>
-                  <P10>リンゴ</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>
-                  内容確認致しました。修正点メールしましたのでご確認ください。
-                </P12>
-              </D3>
-              <D3>
-                <D4>
-                  <P10>ポール</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D3>
-              <D5>
-                <D4>
-                  <P10>ジョージ</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D5>
+              {comments.map((comment: comments) => (
+                <D3 key={comment.comid}>
+                  <D4>
+                    <P10>{comment.uname}</P10>
+                    <P11>{formatDateStr(comment.create.seconds)}</P11>
+                  </D4>
+                  <P12>{comment.comdetail}</P12>
+                </D3>
+              ))}
             </Box>
           </D1>
         </main>
@@ -278,10 +284,6 @@ const D4 = styled.div`
   background: #28adca;
   height: 28px;
   border-radius: 20px 20px 0px 0px;
-`;
-const D5 = styled.div`
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
 `;
 const P1 = styled.p`
   font-family: Gothic A1;
