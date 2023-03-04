@@ -1,9 +1,21 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure
+} from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, Timestamp, query, where, orderBy, CollectionReference } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
 import Link from 'next/link';
@@ -19,7 +31,57 @@ function TodoShow() {
     update: string,
   };
 
+  type comments = {
+    uid: string
+    todoid: string,
+    comid: string,
+    uname: string,
+    comdetail: string,
+    create: Timestamp
+  };
+
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+  const [comments, setComments] = useState<comments[]>([]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [uname, setUname] = useState<string>("");
+  const [comdetail, setComdetail] = useState<string>("");
+
+
+  const fetchComment = async () => {
+    const commentCollection = collection(db, "comment") as CollectionReference<comments>;
+    const commentQuery = query(commentCollection, where("todoid", "==", id), orderBy("create", "desc"));
+    const commentDocsSnap = await getDocs(commentQuery);
+
+    const commentList: comments[] = [];
+    commentDocsSnap.forEach((doc) => {
+      commentList.push(doc.data());
+    });
+
+    setComments(commentList);
+  }
+
+  const addComment = async () => {
+    try {
+      const newComment = doc(collection(db, "comment"));
+      await setDoc(newComment,
+        {
+          uid: null,
+          todoid: id,
+          comid: newComment.id,
+          uname: uname,
+          comdetail: comdetail,
+          create: Timestamp.now(),
+        }
+      );
+
+      onClose();
+      fetchComment();
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -42,6 +104,8 @@ function TodoShow() {
           });
         }
       })();
+
+      fetchComment();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
@@ -65,6 +129,7 @@ function TodoShow() {
           </Heading>
           <Box>
             <Button
+              onClick={onOpen}
               background="#28ADCA"
               border="1px solid rgba(0, 0, 0, 0.8)"
               box-sizing="border-box"
@@ -139,39 +204,55 @@ function TodoShow() {
               </Box>
             </D2>
             <Box marginTop="14px" width="472px">
-              <D3>
-                <D4>
-                  <P10>ジョン</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D3>
-              <D3>
-                <D4>
-                  <P10>リンゴ</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>
-                  内容確認致しました。修正点メールしましたのでご確認ください。
-                </P12>
-              </D3>
-              <D3>
-                <D4>
-                  <P10>ポール</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D3>
-              <D5>
-                <D4>
-                  <P10>ジョージ</P10>
-                  <P11>2020/01/01</P11>
-                </D4>
-                <P12>2日後までに完了お願い致します。</P12>
-              </D5>
+              {comments.map((comment: comments) => (
+                <D3 key={comment.comid}>
+                  <D4>
+                    <P10>{comment.uname}</P10>
+                    <P11>{formatDateStr(comment.create.seconds)}</P11>
+                  </D4>
+                  <P12>{comment.comdetail}</P12>
+                </D3>
+              ))}
             </Box>
           </D1>
         </main>
+
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent
+            width={"400px"}
+            height={"434px"}
+          >
+            <ModalHeader
+              fontWeight={"bold"}
+              fontSize={"36px"}
+            >Comment</ModalHeader>
+            <ModalBody
+              padding={"0"}
+              margin={"0 auto"}
+            >
+              <Box
+                marginBottom={"9px"}
+              >
+                <SModal_Label>Name</SModal_Label>
+                <SModal_Input type="text" onChange={(event) => setUname(event.target.value)} />
+              </Box>
+              <SModal_Label>Your Comment</SModal_Label>
+              <SModal_Textarea onChange={(event) => setComdetail(event.target.value)} />
+            </ModalBody>
+            <Box
+              margin={"0 auto"}
+              marginTop={"7px"}
+              marginBottom={"10px"}
+            >
+              <SModal_Button
+                onClick={addComment}
+              >
+                CREATE
+              </SModal_Button>
+            </Box>
+          </ModalContent>
+        </Modal>
       </Box>
     </Layout>
   );
@@ -203,10 +284,6 @@ const D4 = styled.div`
   background: #28adca;
   height: 28px;
   border-radius: 20px 20px 0px 0px;
-`;
-const D5 = styled.div`
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
 `;
 const P1 = styled.p`
   font-family: Gothic A1;
@@ -331,4 +408,32 @@ const P13 = styled.div`
   font-style: normal;
   font-weight: 700;
   white-space: pre-line;
+`;
+
+const SModal_Label = styled.div`
+height: 23px;
+font-weight: 700;
+font-size: 18px;
+line-height: 22px;
+color: rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Input = styled(Input)`
+width: 372px;
+border: 1px solid rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Textarea = styled(Textarea)`
+width: 372px;
+height:192px;
+border: 1px solid rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Button = styled(Button)`
+width: 372px;
+height: 43px;
+background: #28ADCA;
+border: 1px solid rgba(0, 0, 0, 0.8);
+border-radius: 10px;
+color: #F0FCFF;
 `;
