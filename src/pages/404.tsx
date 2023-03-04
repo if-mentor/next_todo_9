@@ -2,12 +2,11 @@ import Layout from "@/components/Layout";
 import React from "react";
 import styled from "@emotion/styled";
 import { Button } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 function a404() {
-  const router = useRouter();
   const submitTop = () => {
-    router.push({
+    Router.push({
       pathname: `/TodoTop`,
     });
   };
