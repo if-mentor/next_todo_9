@@ -1,4 +1,16 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure
+} from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
@@ -20,6 +32,8 @@ function TodoShow() {
   };
 
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -65,6 +79,7 @@ function TodoShow() {
           </Heading>
           <Box>
             <Button
+              onClick={onOpen}
               background="#28ADCA"
               border="1px solid rgba(0, 0, 0, 0.8)"
               box-sizing="border-box"
@@ -172,6 +187,43 @@ function TodoShow() {
             </Box>
           </D1>
         </main>
+
+
+        {/* TODO */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent
+            width={"400px"}
+            height={"434px"}
+          >
+            <ModalHeader
+              fontWeight={"bold"}
+              fontSize={"36px"}
+            >Comment</ModalHeader>
+            <ModalBody
+              padding={"0"}
+              margin={"0 auto"}
+            >
+              <Box
+                marginBottom={"9px"}
+              >
+                <SModal_Label>Name</SModal_Label>
+                <SModal_Input type="text" />
+              </Box>
+              <SModal_Label>Your Comment</SModal_Label>
+              <SModal_Textarea />
+            </ModalBody>
+            <Box
+              margin={"0 auto"}
+              marginTop={"7px"}
+              marginBottom={"10px"}
+            >
+              <SModal_Button colorScheme='blue' onClick={onClose}>
+                CREATE
+              </SModal_Button>
+            </Box>
+          </ModalContent>
+        </Modal>
       </Box>
     </Layout>
   );
@@ -331,4 +383,31 @@ const P13 = styled.div`
   font-style: normal;
   font-weight: 700;
   white-space: pre-line;
+`;
+
+const SModal_Label = styled.div`
+height: 23px;
+font-weight: 700;
+font-size: 18px;
+line-height: 22px;
+color: rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Input = styled(Input)`
+width: 372px;
+border: 1px solid rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Textarea = styled(Textarea)`
+width: 372px;
+height:192px;
+border: 1px solid rgba(0, 0, 0, 0.8);
+`;
+
+const SModal_Button = styled(Button)`
+width: 372px;
+height: 43px;
+background: #28ADCA;
+border: 1px solid rgba(0, 0, 0, 0.8);
+border-radius: 10px;
 `;
