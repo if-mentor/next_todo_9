@@ -1,4 +1,6 @@
 import React from "react";
+import { db } from "@/libs/firebase";
+import { deleteDoc, doc } from "firebase/firestore";
 import {
   HStack,
   Select,
@@ -12,6 +14,11 @@ import {
 import Link from "next/link";
 import { formatDateStr } from "@/utils";
 const TodoList = (props: any) => {
+  //削除処理
+  const deleteTodo = async (docId: string) => {
+    await deleteDoc(doc(db, "todoposts", docId));
+    props.setIsEdit(true);
+  };
   return (
     <Tbody fontWeight={"bold"}>
       {props.todos.map((todo: any) => {

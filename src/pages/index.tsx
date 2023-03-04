@@ -1,12 +1,5 @@
 import { db } from "@/libs/firebase";
-import {
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc,
-  setDoc,
-} from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -36,8 +29,6 @@ import {
 import Layout from "@/components/Layout";
 import TodoList from "@/components/TodoList";
 import { Pagination } from "@/components/Pagination";
-import { useAtom } from "jotai";
-import { todoAtom } from "../atom.js";
 
 const TodoTop = () => {
   const postPerPage = 6;
@@ -149,11 +140,6 @@ const TodoTop = () => {
   useEffect(() => {
     console.log(pagedTodos + "そのページに表示される記事の配列");
   });
-  //削除処理
-  const deleteTodo = async (docId: string) => {
-    await deleteDoc(doc(db, "todoposts", docId));
-    setIsEdit(true);
-  };
 
   //status変更処理
   const statusChangeTodo = async (event: any, docId: string) => {
@@ -180,6 +166,7 @@ const TodoTop = () => {
       item.title.toLowerCase().includes(searchTerm)
     );
     setFilteredtodos(filteredList);
+    setCurrentPage(1);
   };
 
   //statusフィルター処理(or条件)
@@ -195,6 +182,7 @@ const TodoTop = () => {
       const filteredList = todos.filter((todo: any) => todo.status === status);
       setFilteredtodos(filteredList);
     }
+    setCurrentPage(1);
   };
 
   //priorityフィルター処理(or条件)
@@ -212,6 +200,7 @@ const TodoTop = () => {
       );
       setFilteredtodos(filteredList);
     }
+    setCurrentPage(1);
   };
 
   //フィルターreset処理
@@ -220,6 +209,7 @@ const TodoTop = () => {
     setStatusval(0);
     setPriorityval(0);
     setSearchTerm("");
+    setCurrentPage(1);
   };
 
   return (
@@ -378,6 +368,7 @@ const TodoTop = () => {
                 statuslist={statuslist}
                 prioritylist={prioritylist}
                 statusChangeTodo={statusChangeTodo}
+                setIsEdit={setIsEdit}
               />
             </Table>
           </TableContainer>

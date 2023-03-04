@@ -1,8 +1,12 @@
 import Link from "next/link";
 import styled from "@emotion/styled";
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, HStack, Box } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 
 export const Pagination = (props: any) => {
+  const pages = Math.ceil(props.totalCount / props.PER_PAGE);
+  const [start, setStart] = useState<number>(0);
+  const [end, setEnd] = useState<number>(pages);
   const range = (start: number, end: number) =>
     [...Array(end - start + 1)].map((_, i) => start + i);
 
@@ -24,93 +28,103 @@ export const Pagination = (props: any) => {
     color: #b5b5b5;
   `;
 
-  const pages = Math.ceil(props.totalCount / props.PER_PAGE);
+  useEffect(() => {
+    if (props.currentPage - 3 >= 1) {
+      if (props.currentPage + 3 <= pages) {
+        setStart(props.currentPage - 3);
+        setEnd(props.currentPage + 3);
+      } else {
+        setStart(props.currentPage - 3);
+        setEnd(pages);
+      }
+    } else {
+      if (props.currentPage + 3 <= pages) {
+        setStart(1);
+        setEnd(6);
+      } else {
+        setStart(1);
+        setEnd(6);
+      }
+    }
+  }, [props.currentPage]);
+
   console.log(props.totalCount + "トータル記事数");
   console.log(props.currentPage + "現在のページ");
-
+  console.log(start);
+  console.log(end);
   return (
     <>
       {pages > 1 && (
         <HStack justifyContent={"center"} marginTop={"16px"}>
-          <SButtonPage
-            onClick={() => props.setCurrentPage(props.currentPage - 1)}
-          >
-            ＜
-          </SButtonPage>
-          {range(1, pages).map((number, index) => {
-            return (
-              <SButtonPage
-                key={index}
-                onClick={() => props.setCurrentPage(number)}
-              >
-                {number}
-              </SButtonPage>
-            );
-          })}
-          <SButtonPage
-            onClick={() => props.setCurrentPage(props.currentPage - 1)}
-          >
-            ＞
-          </SButtonPage>
+          {props.currentPage != 1 && (
+            <SButtonPage
+              onClick={() => props.setCurrentPage(props.currentPage - 1)}
+            >
+              ＜
+            </SButtonPage>
+          )}
+          {pages < 6 ? (
+            <>
+              {range(1, pages).map((number, index) => {
+                return (
+                  <>
+                    {props.currentPage == number ? (
+                      <SButtonPage
+                        key={index}
+                        style={{ background: "#aaa", color: "#fff" }}
+                      >
+                        {number}
+                      </SButtonPage>
+                    ) : (
+                      <SButtonPage
+                        key={index}
+                        onClick={() => props.setCurrentPage(number)}
+                      >
+                        {number}
+                      </SButtonPage>
+                    )}
+                  </>
+                );
+              })}
+            </>
+          ) : (
+            <>
+              {start > 1 && <Box>...</Box>}
+
+              {range(start, end).map((number, index) => {
+                return (
+                  <>
+                    {props.currentPage == number ? (
+                      <SButtonPage
+                        key={index}
+                        style={{ background: "#aaa", color: "#fff" }}
+                      >
+                        {number}
+                      </SButtonPage>
+                    ) : (
+                      <SButtonPage
+                        key={index}
+                        onClick={() => props.setCurrentPage(number)}
+                      >
+                        {number}
+                      </SButtonPage>
+                    )}
+                  </>
+                );
+              })}
+              {end < pages && <Box>...</Box>}
+            </>
+          )}
+
+          {props.currentPage != pages && (
+            <SButtonPage
+              onClick={() => props.setCurrentPage(props.currentPage + 1)}
+            >
+              ＞
+            </SButtonPage>
+          )}
         </HStack>
       )}
     </>
   );
-
-  // if (pages > 1) {
-  //   if (pages <= 6) {
-  //     return (
-  //       // <HStack justifyContent={"center"} marginTop={"16px"}>
-  //       //   {range(1, pages).map((number, index) => {
-  //       //     if (index = props.pageId - 1) {
-  //       //       return <SButtonPage key={index}>{number}</SButtonPage>;
-  //       //     } else {
-  //       //       return (
-  //       //         <SButtonPage key={index}>
-  //       //           <Link href={`/page/${number}`}>{number}</Link>
-  //       //         </SButtonPage>
-  //       //       );
-  //       //     }
-  //       //   })}
-  //       // </HStack>
-  //       <HStack justifyContent={"center"} marginTop={"16px"}>
-  //         {range(1, pages).map((number, index) => {
-  //           return (
-  //             <SButtonPage
-  //               key={index}
-  //               onClick={() => props.setCurrentPage({ number })}
-  //             >
-  //               {number}
-  //             </SButtonPage>
-  //           );
-  //         })}
-  //       </HStack>
-  //     );
-  //   } else {
-  //     //   if (props.pageId) {
-  //     //     return (
-  //     //       <HStack justifyContent={"center"} marginTop={"16px"}>
-  //     //         <SButtonPage>
-  //     //           <Link href={`/page/${props.pageId}`}>{props.pageId}</Link>
-  //     //         </SButtonPage>
-  //     //       </HStack>
-  //     //     );
-  //     //   } else {
-  //     //     return (
-  //     //       <HStack justifyContent={"center"} marginTop={"16px"}>
-  //     //         <SButtonPage>
-  //     //           <Link href={`/page/1`}>1</Link>
-  //     //         </SButtonPage>
-  //     //         <SButtonPage>
-  //     //           <Link href={`/page/2`}>2</Link>
-  //     //         </SButtonPage>
-  //     //         <SButtonPage>
-  //     //           <Link href={`/page/3`}>3</Link>
-  //     //         </SButtonPage>
-  //     //         <SButtonPage>…</SButtonPage>
-  //     //       </HStack>
-  //     //     );
-  //     //   }
-  //   }
-  // }
 };
