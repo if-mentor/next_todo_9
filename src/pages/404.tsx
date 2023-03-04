@@ -41,7 +41,7 @@ const P1 = styled.p`
   font-weight: 700;
   font-size: 64px;
   line-height: 75px;
-  width: 130px;
+  width: 140px;
   height: 75px;
   color: rgba(0, 0, 0, 0.8);
   margin-bottom: 41px;
@@ -50,7 +50,7 @@ const P1 = styled.p`
   margin-right: auto;
 `;
 const P2 = styled.p`
-  width: 560px;
+  width: 570px;
   height: 29px;
   font-family: "Inter";
   font-style: normal;
