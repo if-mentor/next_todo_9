@@ -35,6 +35,7 @@ function TodoShow() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [uname, setUname] = useState<string>("");
   const [comdetail, setComdetail] = useState<string>("");
 
   const addComment = async () => {
@@ -45,6 +46,7 @@ function TodoShow() {
           uid: null,
           todoid: id,
           comid: newComment.id,
+          uname: uname,
           comdetail: comdetail,
           create: Timestamp.now(),
         }
@@ -227,7 +229,7 @@ function TodoShow() {
                 marginBottom={"9px"}
               >
                 <SModal_Label>Name</SModal_Label>
-                <SModal_Input type="text" />
+                <SModal_Input type="text" onChange={(event) => setUname(event.target.value)} />
               </Box>
               <SModal_Label>Your Comment</SModal_Label>
               <SModal_Textarea onChange={(event) => setComdetail(event.target.value)} />
