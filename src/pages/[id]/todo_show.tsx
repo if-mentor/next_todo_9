@@ -15,7 +15,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
 import Link from 'next/link';
@@ -34,6 +34,27 @@ function TodoShow() {
   const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [comdetail, setComdetail] = useState<string>("");
+
+  const addComment = async () => {
+    try {
+      const newComment = doc(collection(db, "comment"));
+      await setDoc(newComment,
+        {
+          uid: null,
+          todoid: id,
+          comid: newComment.id,
+          comdetail: comdetail,
+          create: Timestamp.now(),
+        }
+      );
+
+      onClose();
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -188,8 +209,6 @@ function TodoShow() {
           </D1>
         </main>
 
-
-        {/* TODO */}
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent
@@ -211,14 +230,16 @@ function TodoShow() {
                 <SModal_Input type="text" />
               </Box>
               <SModal_Label>Your Comment</SModal_Label>
-              <SModal_Textarea />
+              <SModal_Textarea onChange={(event) => setComdetail(event.target.value)} />
             </ModalBody>
             <Box
               margin={"0 auto"}
               marginTop={"7px"}
               marginBottom={"10px"}
             >
-              <SModal_Button colorScheme='blue' onClick={onClose}>
+              <SModal_Button
+                onClick={addComment}
+              >
                 CREATE
               </SModal_Button>
             </Box>
@@ -410,4 +431,5 @@ height: 43px;
 background: #28ADCA;
 border: 1px solid rgba(0, 0, 0, 0.8);
 border-radius: 10px;
+color: #F0FCFF;
 `;
