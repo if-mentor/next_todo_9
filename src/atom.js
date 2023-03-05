@@ -1,4 +1,5 @@
 import { atom } from "jotai";
 
-// Create your atoms and derivatives
+export const uidAtom = atom("");
+
 export const todoAtom = atom([]);
