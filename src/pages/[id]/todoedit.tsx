@@ -51,7 +51,7 @@ function TodoEdit() {
   };
   const back = () => {
     router.push({
-      pathname: "/TodoTop",
+      pathname: "/",
     });
   };
   const submitUpdate = () => {
@@ -64,7 +64,7 @@ function TodoEdit() {
     );
 
     router.push({
-      pathname: "/TodoTop",
+      pathname: "/",
     });
   };
   return (
