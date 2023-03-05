@@ -7,7 +7,7 @@ import Router from "next/router";
 function a404() {
   const submitTop = () => {
     Router.push({
-      pathname: `/TodoTop`,
+      pathname: `/`,
     });
   };
   return (

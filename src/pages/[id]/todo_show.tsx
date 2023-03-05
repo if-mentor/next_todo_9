@@ -140,7 +140,7 @@ function TodoShow() {
             >
               <P1>Comment</P1>
             </Button>
-            <Link href="/TodoTop">
+            <Link href="/">
               <Button
                 background="#95E3F4"
                 border="1px solid rgba(0, 0, 0, 0.8)"
