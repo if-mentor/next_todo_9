@@ -25,10 +25,6 @@ const signup = () => {
     try {
       //firebase宛にemail、passwordを送り、新規ユーザー登録をする。
       const user = await createUserWithEmailAndPassword(auth, email, password);
-      //Context宛にemail、passwordを送り、ユーザー情報を保管する。
-      setUserInfo({ id: user.user.uid });
-      //サインアップ画面からTODO一覧に自動遷移させる
-      router.push("/TodoTop");
     } catch (e) {
       //エラーがあったらエラー内容をアラートさせる
       if (e instanceof FirebaseError) {

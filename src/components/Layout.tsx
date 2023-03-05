@@ -1,47 +1,39 @@
 import styled from "@emotion/styled";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Flex, Button, Spacer, Center } from "@chakra-ui/react";
+import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
+import { useAuthContext } from "@/pages/context/AuthContext";
+import { auth } from "@/libs/firebase";
 
 const Layout = ({ children }: any) => {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>("");
+  const { user } = useAuthContext();
+  const ref = useRef(true);
 
   const logout = () => {
-    localStorage.removeItem("userId");
+    signOut(auth)
+      .then(() => {})
+      .catch((error) => {
+        alert(error);
+      });
   };
-
   useEffect(() => {
-    setUserId(localStorage.getItem("userId"));
-  }, []);
-
-  useEffect(() => {
-    console.log(userId);
-  }, [userId]);
-  // useEffect(() => {
-  //   if (userId) {
-  //     console.log(userId + "でログイン中");
-  //     if (router.pathname === "/signup") {
-  //       // router.push("/TodoTop");
-  //       console.log("トップにリダイレクトします");
-  //     } else if (router.pathname === "/login") {
-  //       // router.push("/TodoTop");
-  //       console.log("トップにリダイレクトします");
-  //     } else {
-  //       console.log("signteupかlogin以外にいます");
-  //     }
-  //   } else {
-  //     if (router.pathname === "/signup") {
-  //       console.log("signteupかloginページにいます");
-  //     } else if (router.pathname === "/login") {
-  //       console.log("signteupかloginページにいます");
-  //     } else {
-  //       // router.push("/login");
-  //       console.log("ログインにリダイレクトします");
-  //     }
-  //   }
-  // }, [userId]);
-
+    // 初回レンダリング時はrefをfalseにして、return。
+    if (ref.current) {
+      ref.current = false;
+      return;
+    }
+    if (user) {
+      if (router.pathname === "/signup" || router.pathname === "/login") {
+        router.push("/");
+      }
+    } else {
+      if (router.pathname !== "/signup" && router.pathname !== "/login") {
+        router.push("/login");
+      }
+    }
+  }, [user]);
   return (
     <>
       <Header>
@@ -49,7 +41,7 @@ const Layout = ({ children }: any) => {
           <Flex w="1080px" align="center">
             <H1>TODO</H1>
             <Spacer />
-            {userId && <Button onClick={logout}>ログアウト</Button>}
+            {user && <Button onClick={logout}>ログアウト</Button>}
           </Flex>
         </Center>
       </Header>

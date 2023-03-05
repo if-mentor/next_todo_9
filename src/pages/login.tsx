@@ -25,11 +25,6 @@ const login = () => {
     try {
       //firebase宛にemail、passwordを送り、ログイン認証をする。
       const user = await signInWithEmailAndPassword(auth, email, password);
-      //Context宛にemail、passwordを送り、ユーザー情報を保管する。
-      // setUserInfo({ id: user.user.uid });
-      localStorage.setItem("userId", user.user.uid);
-      //ログイン画面からTODO一覧に自動遷移させる
-      router.push("/TodoTop");
     } catch (e) {
       //エラーがあったらエラー内容をアラートさせる
       if (e instanceof FirebaseError) {
