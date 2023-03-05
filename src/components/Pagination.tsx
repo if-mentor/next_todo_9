@@ -48,10 +48,6 @@ export const Pagination = (props: any) => {
     }
   }, [props.currentPage]);
 
-  console.log(props.totalCount + "トータル記事数");
-  console.log(props.currentPage + "現在のページ");
-  console.log(start);
-  console.log(end);
   return (
     <>
       {pages > 1 && (

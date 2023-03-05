@@ -237,6 +237,7 @@ const P4 = styled.p`
   font-family: Roboto;
   font-style: normal;
   font-weight: 700;
+
   align-items: center;
   margin-bottom: 16px;
 `;
