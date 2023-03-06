@@ -25,11 +25,12 @@ function TodoShow() {
   const id = router.query.id as string;
 
   type todos = {
-    title: string
-    detail: string,
-    create: string,
-    update: string,
+    title: string;
+    detail: string;
+    create: string;
+    update: string;
   };
+
 
   type comments = {
     uid: string
