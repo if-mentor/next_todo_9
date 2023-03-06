@@ -5,6 +5,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/pages/context/AuthContext";
 import { auth } from "@/libs/firebase";
+import Link from "next/link";
 
 const Layout = ({ children }: any) => {
   const router = useRouter();
@@ -41,7 +42,15 @@ const Layout = ({ children }: any) => {
           <Flex w="1080px" align="center">
             <H1>TODO</H1>
             <Spacer />
-            {user && <Button onClick={logout}>ログアウト</Button>}
+            {user ? (
+              <Button onClick={logout}>ログアウト</Button>
+            ) : (
+              <Flex w="200px">
+                <Link href="/signup">サインアップ</Link>
+                <Spacer />
+                <Link href="/login">ログイン</Link>
+              </Flex>
+            )}
           </Flex>
         </Center>
       </Header>
