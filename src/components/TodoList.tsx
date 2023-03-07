@@ -44,6 +44,9 @@ const TodoList = (props: any) => {
                   border={"1px"}
                   rounded={"full"}
                   textAlign={"center"}
+                  onClick={(e) =>
+                    props.statusChangeTodo(todo.status, todo.todoid)
+                  }
                   fontSize={props.statuslist[todo.status - 1].statusFontSize}
                   borderColor={
                     props.statuslist[todo.status - 1].statusBorderColor
@@ -62,7 +65,7 @@ const TodoList = (props: any) => {
                   display={"inline-block"}
                   w={"112px"}
                   borderColor={"#30494F"}
-                  onChange={(e) => props.statusChangeTodo(e, todo.todoid)}
+                  onChange={(e) => props.priorityChangeTodo(e, todo.todoid)}
                   value={todo.priority}
                 >
                   {props.prioritylist.map((priorityItem: any) => (
