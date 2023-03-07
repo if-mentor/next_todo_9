@@ -4,12 +4,10 @@ import Layout from "@/components/Layout";
 import { auth } from "../libs/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
-import { useRouter } from "next/router";
 
 const login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
 
   const onClickLogin = async () => {
     try {
