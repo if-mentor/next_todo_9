@@ -69,7 +69,7 @@ function TodoEdit() {
           pathname: "/",
         });
       } else {
-        alert("titleは100字未満、detailは520字未満に設定してください。");
+        alert("titleは66字未満、detailは520字未満に設定してください。");
       }
     } else {
       alert("titleまたはdetailが未入力です。");
