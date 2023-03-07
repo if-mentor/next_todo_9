@@ -56,7 +56,7 @@ function TodoEdit() {
   };
   const submitUpdate = () => {
     if (title !== "" && detail !== "") {
-      if (title.length < 100 && detail.length < 520) {
+      if (title.length < 66 && detail.length < 520) {
         //データ追加
         const cityRef = doc(db, "todoposts", count);
         setDoc(
