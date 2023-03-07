@@ -75,7 +75,7 @@ const TodoNew = () => {
                     NEW TODO
                   </FormLabel>
                 </Box>
-                <Link as={NextLink} href="/index">
+                <Link as={NextLink} href="/">
                 <Box textAlign={"right"}>
                   <Button
                     bg="#95E3F4"
