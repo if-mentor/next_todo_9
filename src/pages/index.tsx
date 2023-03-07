@@ -145,7 +145,6 @@ const TodoTop = () => {
   //status変更処理
   const statusChangeTodo = async (status: number, docId: string) => {
     let statusID = status;
-    console.log("statusID" + status);
     if (statusID === statuslist.length) {
       statusID = 1;
     } else {
@@ -162,11 +161,9 @@ const TodoTop = () => {
   //priority変更処理
   const priorityChangeTodo = async (event: any, docId: string) => {
     let priID = Number(event.target.value);
-
     await updateDoc(doc(db, "todoposts", docId), {
       priority: priID,
     });
-    console.log(priID);
     setIsEdit(true);
   };
 
