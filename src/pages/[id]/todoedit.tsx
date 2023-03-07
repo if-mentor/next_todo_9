@@ -55,17 +55,25 @@ function TodoEdit() {
     });
   };
   const submitUpdate = () => {
-    //データ追加
-    const cityRef = doc(db, "todoposts", count);
-    setDoc(
-      cityRef,
-      { title: title, detail: detail, update: serverTimestamp() },
-      { merge: true }
-    );
+    if (title !== "" && detail !== "") {
+      if (title.length < 66 && detail.length < 520) {
+        //データ追加
+        const cityRef = doc(db, "todoposts", count);
+        setDoc(
+          cityRef,
+          { title: title, detail: detail, update: serverTimestamp() },
+          { merge: true }
+        );
 
-    router.push({
-      pathname: "/",
-    });
+        router.push({
+          pathname: "/",
+        });
+      } else {
+        alert("titleは66字未満、detailは520字未満に設定してください。");
+      }
+    } else {
+      alert("titleまたはdetailが未入力です。");
+    }
   };
   return (
     <>
