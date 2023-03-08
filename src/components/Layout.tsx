@@ -1,11 +1,58 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Flex, Button, Spacer, Center } from "@chakra-ui/react";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/pages/context/AuthContext";
+import { auth } from "@/libs/firebase";
+import Link from "next/link";
 
 const Layout = ({ children }: any) => {
+  const router = useRouter();
+  const { user } = useAuthContext();
+  const ref = useRef(true);
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => {})
+      .catch((error) => {
+        alert(error);
+      });
+  };
+  useEffect(() => {
+    // 初回レンダリング時はrefをfalseにして、return。
+    if (ref.current) {
+      ref.current = false;
+      return;
+    }
+    if (user) {
+      if (router.pathname === "/signup" || router.pathname === "/login") {
+        router.push("/");
+      }
+    } else {
+      if (router.pathname !== "/signup" && router.pathname !== "/login") {
+        router.push("/login");
+      }
+    }
+  }, [user]);
   return (
     <>
       <Header>
-        <H1>TODO</H1>
+        <Center>
+          <Flex w="1080px" align="center">
+            <H1>TODO</H1>
+            <Spacer />
+            {user ? (
+              <Button onClick={logout}>ログアウト</Button>
+            ) : (
+              <Flex w="200px">
+                <Link href="/signup">サインアップ</Link>
+                <Spacer />
+                <Link href="/login">ログイン</Link>
+              </Flex>
+            )}
+          </Flex>
+        </Center>
       </Header>
       <main>{children}</main>
     </>
@@ -18,10 +65,7 @@ const Header = styled.div`
   background: #95e3f4;
   padding: 12px 0;
 `;
-
 const H1 = styled.h1`
-  width: 1080px;
-  margin: 0 auto;
   font-family: Roboto;
   font-size: 48px;
   font-weight: 700;
