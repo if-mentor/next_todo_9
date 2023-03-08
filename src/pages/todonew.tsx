@@ -29,7 +29,7 @@ const TodoNew = () => {
   const [priority,setPriority] = useState<number>(3);
   const [titleError,setTitleError] = useState<string>('');
   const [detailError,setDetailError] = useState<string>('');
-  const [isError,setIsError] = useState<boolean>(true);
+  const [isError,setIsError] = useState({title:true,detail:true});
 
   const validateTitle = (title: string) =>{
     const maxTitleLength = 65;
@@ -38,17 +38,21 @@ const TodoNew = () => {
     //　制限1.空の場合
     if (!title) {
       titleError = "タイトルを入力してください";
-      setIsError(true);
+      setIsError((prev)=>({...prev,title:true}));
     //　制限2.文字数が65文字より多い場合
     } else if (title.length > maxTitleLength) {
+      console.log(title.length)
       titleError = `投稿は${maxTitleLength}文字以内で入力してください`;
-      setIsError(true);
+      setIsError((prev)=>({...prev,title:true}));
     } else {
-      setIsError(false);
+      setIsError((prev)=>({...prev,title:false}));
     }
     //検証に引っ掛かった時、エラーを保持するstateを更新
     setTitleError(titleError);
   }
+  useEffect(()=>{
+    console.log(isError);
+  },[isError])
 
   const validateDetail = (detail: string) =>{
     const maxDetailLength = 519;
@@ -57,13 +61,14 @@ const TodoNew = () => {
     //　制限1.空の場合
     if (!detail) {
       detailError = "本文を入力してください";
-      setIsError(true);
+      setIsError((prev)=>({...prev,detail:true}));
     //　制限2.文字数が519文字より多い場合
     } else if (detail.length > maxDetailLength) {
+      console.log(detail.length)
       detailError = `投稿は${maxDetailLength}文字以内で入力してください`;
-      setIsError(true);
+      setIsError((prev)=>({...prev,detail:true}));
     } else {
-      setIsError(false);
+      setIsError((prev)=>({...prev,detail:false}));
     }
     //検証に引っ掛かった時、エラーを保持するstateを更新
     setDetailError(detailError);
@@ -185,7 +190,7 @@ useEffect(() => {
                   type="submit"
                   borderRadius="full"
                   onClick={()=>handleClick()}
-                  isDisabled={isError}
+                  isDisabled={isError.title || isError.detail}
                 >
                   CREATE
                 </Button>
