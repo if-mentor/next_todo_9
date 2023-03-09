@@ -204,7 +204,7 @@ function TodoShow() {
                 </Box>
               </Box>
             </D2>
-            <Box marginTop="14px" width="472px">
+            <Box marginTop="14px" width="472px" height="480px" overflowY={"scroll"}>
               {comments.map((comment: comments) => (
                 <D3 key={comment.comid}>
                   <D4>
