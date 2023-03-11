@@ -262,6 +262,7 @@ export default TodoShow;
 const D1 = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: start;
 `;
 const D1_HEAD = styled.div`
   display: flex;
