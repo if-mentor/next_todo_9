@@ -16,7 +16,21 @@ const login = () => {
     } catch (e) {
       //エラーがあったらエラー内容をアラートさせる
       if (e instanceof FirebaseError) {
-        alert(e);
+        if (e instanceof FirebaseError) {
+          if (e.code === "auth/invalid-email") {
+            alert("メールアドレスの形式が間違っています");
+          } else if (e.code === "auth/user-disabled") {
+            alert("指定のアドレスのユーザが無効になっています");
+          } else if (e.code === "auth/user-not-found") {
+            alert("指定のアドレスのユーザが存在しません");
+          } else if (e.code === "auth/wrong-password") {
+            alert("指定のアドレスのパスワードが間違っています");
+          } else if (e.code === "auth/too-many-requests") {
+            alert("何度もパスワードを間違えました");
+          } else {
+            alert(e);
+          }
+        }
       }
     }
   };

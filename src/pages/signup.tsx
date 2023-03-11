@@ -20,7 +20,15 @@ const signup = () => {
     } catch (e) {
       //エラーがあったらエラー内容をアラートさせる
       if (e instanceof FirebaseError) {
-        alert(e);
+        if (e.code === "auth/invalid-email") {
+          alert("メールアドレスの形式が間違っています");
+        } else if (e.code === "auth/email-already-in-use") {
+          alert("指定のアドレスのユーザはすでに存在しています");
+        } else if (e.code === "auth/internal-error") {
+          alert("何かしらのエラーが発生しました。入力内容をご確認ください");
+        } else {
+          alert(e);
+        }
       }
     }
   };
