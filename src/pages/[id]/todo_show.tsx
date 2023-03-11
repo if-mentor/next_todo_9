@@ -159,48 +159,46 @@ function TodoShow() {
         <main>
           <D1>
             <D2>
-              <Box margin="10px">
-                <P3>TITLE</P3>
-                <P4>{todos.title}</P4>
-                <P3>DETAIL</P3>
-                <P5>
-                  {todos.detail}
-                </P5>
-                <Box display="flex">
-                  <Link href={`/${id}/todoedit`}>
-                    <Button
-                      width="112px"
-                      height="40px"
-                      background="#95E3F4"
-                      border="1px solid #000000"
-                      borderRadius="50px"
-                      margin="18px 48px 0px 0px"
+              <P3>TITLE</P3>
+              <P4>{todos.title}</P4>
+              <P3>DETAIL</P3>
+              <P5>
+                {todos.detail}
+              </P5>
+              <Box display="flex">
+                <Link href={`/${id}/todoedit`}>
+                  <Button
+                    width="112px"
+                    height="40px"
+                    background="#95E3F4"
+                    border="1px solid #000000"
+                    borderRadius="50px"
+                    margin="18px 48px 0px 0px"
+                  >
+                    <P6>Edit</P6>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 19 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <P6>Edit</P6>
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 19 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
-                          fill="black"
-                          fillOpacity="0.8"
-                        />
-                      </svg>
-                    </Button>
-                  </Link>
-                  <Box margin="16px 48px 0px 0px">
-                    <P7>Create</P7>
+                      <path
+                        d="M11.1396 6.02L12.0648 6.94L2.95277 16H2.02749V15.08L11.1396 6.02ZM14.7602 0C14.5088 0 14.2473 0.1 14.0562 0.29L12.2157 2.12L15.9873 5.87L17.8278 4.04C18.22 3.65 18.22 3.02 17.8278 2.63L15.4743 0.29C15.2732 0.09 15.0217 0 14.7602 0ZM11.1396 3.19L0.0159912 14.25V18H3.78754L14.9111 6.94L11.1396 3.19Z"
+                        fill="black"
+                        fillOpacity="0.8"
+                      />
+                    </svg>
+                  </Button>
+                </Link>
+                <Box margin="16px 48px 0px 0px">
+                  <P7>Create</P7>
 
-                    <P9>{todos.create}</P9>
-                  </Box>
-                  <Box marginTop="16px">
-                    <P8>Update</P8>
-                    <P9>{todos.update}</P9>
-                  </Box>
+                  <P9>{todos.create}</P9>
+                </Box>
+                <Box marginTop="16px">
+                  <P8>Update</P8>
+                  <P9>{todos.update}</P9>
                 </Box>
               </Box>
             </D2>
@@ -274,6 +272,7 @@ const D2 = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.8);
   border-radius: 20px;
   margin: 0px 23px 0px 0px;
+  padding: 10px;
 `;
 const D3 = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.8);
@@ -329,13 +328,12 @@ const P4 = styled.p`
 `;
 const P5 = styled.p`
   width: 560px;
-  height: 263px;
+  min-height: 263px;
   font-size: 20px;
   font-family: Roboto;
   font-style: normal;
   font-weight: 700;
   line-height: 23px;
-  align-items: center;
   display: center;
 `;
 const P6 = styled.p`
