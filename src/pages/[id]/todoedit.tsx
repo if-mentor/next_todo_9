@@ -33,6 +33,12 @@ function TodoEdit() {
       const docID = window.location.pathname.slice(1, 21);
       const docref = await doc(db, "todoposts", docID);
       const docsnap = await getDoc(docref);
+
+      if (docsnap.exists() === false) {
+        router.replace('/404');
+        return;
+      }
+
       const array = { ...docsnap.data() };
       array && setDocData(array);
       setDetail(array.detail);
@@ -56,7 +62,7 @@ function TodoEdit() {
   };
   const submitUpdate = () => {
     if (title !== "" && detail !== "") {
-      if (title.length < 66 && detail.length < 520) {
+      if (title.length < 21 && detail.length < 520) {
         //データ追加
         const cityRef = doc(db, "todoposts", count);
         setDoc(
@@ -69,7 +75,7 @@ function TodoEdit() {
           pathname: "/",
         });
       } else {
-        alert("titleは66字未満、detailは520字未満に設定してください。");
+        alert("titleは20字以下、detailは520字未満に設定してください。");
       }
     } else {
       alert("titleまたはdetailが未入力です。");

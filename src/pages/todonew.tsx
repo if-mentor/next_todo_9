@@ -21,6 +21,7 @@ import {
 
 import { collection, Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase";
+import { useRouter } from "next/router";
 
 const TodoNew = () => {
 
@@ -30,9 +31,10 @@ const TodoNew = () => {
   const [titleError,setTitleError] = useState<string>('');
   const [detailError,setDetailError] = useState<string>('');
   const [isError,setIsError] = useState({title:true,detail:true});
+  const router = useRouter();
 
   const validateTitle = (title: string) =>{
-    const maxTitleLength = 65;
+    const maxTitleLength = 20;
     let titleError = "";
 
     //　制限1.空の場合
@@ -50,9 +52,6 @@ const TodoNew = () => {
     //検証に引っ掛かった時、エラーを保持するstateを更新
     setTitleError(titleError);
   }
-  useEffect(()=>{
-    console.log(isError);
-  },[isError])
 
   const validateDetail = (detail: string) =>{
     const maxDetailLength = 519;
@@ -91,7 +90,6 @@ useEffect(() => {
   }
 }, [title, detail]);
 
-
   const handleClick = async()=>{
     try {
       const newTodoposts = doc(collection(db, "todoposts"));
@@ -108,6 +106,9 @@ useEffect(() => {
           comid:null
         }
       );
+        router.push({
+          pathname: "/",
+        });
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -169,7 +170,7 @@ useEffect(() => {
               { detailError &&
                   <Text color="red">{detailError}</Text>
                 }
-              
+
               <Text mb={1} fontWeight={"bold"} fontSize={"24px"}>
                 PRIORITY
               </Text>
@@ -181,9 +182,6 @@ useEffect(() => {
                 </Stack>
               </RadioGroup>
               <Box mt={4} textAlign={"right"}>
-                <Button mr={3} type="button" borderRadius="full" bg="red.100">
-                  DRAFT
-                </Button>
                 <Button
                   bg="#40D1F1"
                   colorScheme="twitter"

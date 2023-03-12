@@ -91,6 +91,10 @@ function TodoShow() {
       (async () => {
         const todoDocRef = doc(db, "todoposts", id);
         const todoDocSnap = await getDoc(todoDocRef);
+        if (todoDocSnap.exists() === false) {
+          router.replace('/404');
+        }
+
         const todoDocObj = todoDocSnap.data();
 
         if (todoDocObj) {
