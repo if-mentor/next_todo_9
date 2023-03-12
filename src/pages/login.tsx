@@ -27,6 +27,8 @@ const login = () => {
             alert("指定のアドレスのパスワードが間違っています");
           } else if (e.code === "auth/too-many-requests") {
             alert("何度もパスワードを間違えました");
+          } else if (e.code === "auth/internal-error") {
+            alert("何かしらのエラーが発生しました。入力内容をご確認ください");
           } else {
             alert(e);
           }

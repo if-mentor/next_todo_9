@@ -24,6 +24,8 @@ const signup = () => {
           alert("メールアドレスの形式が間違っています");
         } else if (e.code === "auth/email-already-in-use") {
           alert("指定のアドレスのユーザはすでに存在しています");
+        } else if (e.code === "auth/weak-password") {
+          alert("パスワードを6文字以上で入力してください");
         } else if (e.code === "auth/internal-error") {
           alert("何かしらのエラーが発生しました。入力内容をご確認ください");
         } else {
