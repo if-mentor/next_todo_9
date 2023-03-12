@@ -19,6 +19,7 @@ import { collection, doc, getDoc, getDocs, setDoc, Timestamp, query, where, orde
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
 
 function TodoShow() {
   const router = useRouter();
@@ -49,6 +50,15 @@ function TodoShow() {
   const [uname, setUname] = useState<string>("");
   const [comdetail, setComdetail] = useState<string>("");
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
+
+  const unameMaxLength = 20;
+  const comdetailMaxLength = 75;
 
   const fetchComment = async () => {
     const commentCollection = collection(db, "comment") as CollectionReference<comments>;
@@ -77,6 +87,7 @@ function TodoShow() {
         }
       );
 
+      reset();
       onClose();
       fetchComment();
     } catch (e) {
@@ -221,40 +232,45 @@ function TodoShow() {
         </main>
 
         <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent
-            width={"400px"}
-            height={"434px"}
-          >
-            <ModalHeader
-              fontWeight={"bold"}
-              fontSize={"36px"}
-            >Comment</ModalHeader>
-            <ModalBody
-              padding={"0"}
-              margin={"0 auto"}
+          <form onSubmit={handleSubmit(addComment)}>
+            <ModalOverlay />
+            <ModalContent
+              width={"400px"}
+              height={"434px"}
             >
+              <ModalHeader
+                fontWeight={"bold"}
+                fontSize={"36px"}
+              >Comment</ModalHeader>
+              <ModalBody
+                padding={"0"}
+                margin={"0 auto"}
+              >
+                <Box
+                  marginBottom={"9px"}
+                >
+                  <SModal_Label>Name</SModal_Label>
+                  <SModal_Input type="text" {...register("uname", { required: true, maxLength: unameMaxLength, onChange: (event) => { setUname(event.target.value) } })} />
+                  {errors.uname?.type === "required" && <PError>名前を入力してください</PError>}
+                  {errors.uname?.type === "maxLength" && <PError>名前は{unameMaxLength}文字以内で入力してください</PError>}
+                </Box>
+                <SModal_Textarea {...register("comdetail", { required: true, maxLength: comdetailMaxLength, onChange: (event) => setComdetail(event.target.value) })} />
+                {errors.comdetail?.type === "required" && <PError>コメントを入力してください</PError>}
+                {errors.comdetail?.type === "maxLength" && <PError>コメントは{comdetailMaxLength}文字以内で入力してください</PError>}
+              </ModalBody>
               <Box
-                marginBottom={"9px"}
+                margin={"0 auto"}
+                marginTop={"7px"}
+                marginBottom={"10px"}
               >
-                <SModal_Label>Name</SModal_Label>
-                <SModal_Input type="text" onChange={(event) => setUname(event.target.value)} />
+                <SModal_Button
+                  type="submit"
+                >
+                  CREATE
+                </SModal_Button>
               </Box>
-              <SModal_Label>Your Comment</SModal_Label>
-              <SModal_Textarea onChange={(event) => setComdetail(event.target.value)} />
-            </ModalBody>
-            <Box
-              margin={"0 auto"}
-              marginTop={"7px"}
-              marginBottom={"10px"}
-            >
-              <SModal_Button
-                onClick={addComment}
-              >
-                CREATE
-              </SModal_Button>
-            </Box>
-          </ModalContent>
+            </ModalContent>
+          </form>
         </Modal>
       </Box>
     </Layout>
@@ -440,4 +456,8 @@ background: #28ADCA;
 border: 1px solid rgba(0, 0, 0, 0.8);
 border-radius: 10px;
 color: #F0FCFF;
+`;
+
+const PError = styled.p`
+color: red;
 `;
