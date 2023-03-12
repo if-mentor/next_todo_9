@@ -222,7 +222,7 @@ function TodoShow() {
                 <D3 key={comment.comid}>
                   <D4>
                     <P10>{comment.uname}</P10>
-                    <P11>{formatDateStr(comment.create.seconds)}</P11>
+                    <P11>{formatDateStr(comment.create.seconds, false)}</P11>
                   </D4>
                   <P12>{comment.comdetail}</P12>
                 </D3>
@@ -236,7 +236,7 @@ function TodoShow() {
             <ModalOverlay />
             <ModalContent
               width={"400px"}
-              height={"434px"}
+              minHeight={"434px"}
             >
               <ModalHeader
                 fontWeight={"bold"}
@@ -302,9 +302,12 @@ const D3 = styled.div`
 `;
 const D4 = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: #28adca;
   height: 28px;
   border-radius: 20px 20px 0px 0px;
+  padding: 0 24px 0 24px;
 `;
 const P1 = styled.p`
   font-family: Gothic A1;
@@ -391,28 +394,22 @@ const P9 = styled.p`
   font-weight: 700;
 `;
 const P10 = styled.p`
-  width: 95px;
-  height: 19px;
   font-size: 16px;
   color: #f0fcff;
-  margin: 3px 242px 4px 24px;
   font-family: Roboto;
   font-style: normal;
   font-weight: 700;
 `;
 const P11 = styled.p`
-  width: 100px;
-  height: 19px;
   color: #f0fcff;
   font-size: 14px;
-  margin: 3px 0px 0px;
   font-family: Roboto;
   font-style: normal;
   font-weight: 700;
 `;
 const P12 = styled.p`
   width: 440px;
-  height: 64px;
+  height: 76px;
   font-size: 16px;
   color: rgba(0, 0, 0, 0.8);
   font-family: Roboto;
