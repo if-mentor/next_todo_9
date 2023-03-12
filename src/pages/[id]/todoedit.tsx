@@ -69,11 +69,15 @@ function TodoEdit() {
           cityRef,
           { title: title, detail: detail, update: serverTimestamp() },
           { merge: true }
-        );
-
-        router.push({
-          pathname: "/",
-        });
+        )
+          .then(() => {
+            router.push({
+              pathname: "/",
+            });
+          })
+          .catch((error) => {
+            console.error("Firestoreの更新処理に失敗しました", error);
+          });
       } else {
         alert("titleは20字以下、detailは520字未満に設定してください。");
       }
