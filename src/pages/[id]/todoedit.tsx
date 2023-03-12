@@ -33,6 +33,12 @@ function TodoEdit() {
       const docID = window.location.pathname.slice(1, 21);
       const docref = await doc(db, "todoposts", docID);
       const docsnap = await getDoc(docref);
+
+      if (docsnap.exists() === false) {
+        router.replace('/404');
+        return;
+      }
+
       const array = { ...docsnap.data() };
       array && setDocData(array);
       setDetail(array.detail);
