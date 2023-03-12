@@ -6,10 +6,12 @@
  * @param unixTimeSeconds 
  * @returns 
  */
-export const formatDateStr = (unixTimeSeconds: number) => {
+export const formatDateStr = (unixTimeSeconds: number, isTime: boolean = true) => {
   const date = new Date(unixTimeSeconds * 1000);
   const hour = ("0" + date.getHours()).slice(-2);
   const minute = ("0" + date.getMinutes()).slice(-2);
 
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${hour}:${minute}`;
+  const time = isTime ? `${hour}: ${minute}` : "";
+
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${time}`;
 };
