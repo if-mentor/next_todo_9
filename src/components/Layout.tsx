@@ -40,7 +40,9 @@ const Layout = ({ children }: any) => {
       <Header>
         <Center>
           <Flex w="1080px" align="center">
-            <H1>TODO</H1>
+            <H1>
+              <Link href="/">TODO</Link>
+            </H1>
             <Spacer />
             {user ? (
               <Button onClick={logout}>ログアウト</Button>
