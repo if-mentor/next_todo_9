@@ -9,17 +9,28 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import styled from "@emotion/styled";
-import { collection, doc, getDoc, getDocs, setDoc, Timestamp, query, where, orderBy, CollectionReference } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  Timestamp,
+  query,
+  where,
+  orderBy,
+  CollectionReference,
+} from "firebase/firestore";
 import { db } from "@/libs/firebase";
 import { formatDateStr } from "@/utils";
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import Link from "next/link";
+import { useForm } from "react-hook-form";
 
 function TodoShow() {
   const router = useRouter();
@@ -32,17 +43,21 @@ function TodoShow() {
     update: string;
   };
 
-
   type comments = {
-    uid: string
-    todoid: string,
-    comid: string,
-    uname: string,
-    comdetail: string,
-    create: Timestamp
+    uid: string;
+    todoid: string;
+    comid: string;
+    uname: string;
+    comdetail: string;
+    create: Timestamp;
   };
 
-  const [todos, setTodos] = useState<todos>({ title: "", detail: "", create: "", update: "" });
+  const [todos, setTodos] = useState<todos>({
+    title: "",
+    detail: "",
+    create: "",
+    update: "",
+  });
   const [comments, setComments] = useState<comments[]>([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,15 +69,22 @@ function TodoShow() {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm();
 
   const unameMaxLength = 20;
   const comdetailMaxLength = 75;
 
   const fetchComment = async () => {
-    const commentCollection = collection(db, "comment") as CollectionReference<comments>;
-    const commentQuery = query(commentCollection, where("todoid", "==", id), orderBy("create", "desc"));
+    const commentCollection = collection(
+      db,
+      "comment"
+    ) as CollectionReference<comments>;
+    const commentQuery = query(
+      commentCollection,
+      where("todoid", "==", id),
+      orderBy("create", "desc")
+    );
     const commentDocsSnap = await getDocs(commentQuery);
 
     const commentList: comments[] = [];
@@ -71,21 +93,19 @@ function TodoShow() {
     });
 
     setComments(commentList);
-  }
+  };
 
   const addComment = async () => {
     try {
       const newComment = doc(collection(db, "comment"));
-      await setDoc(newComment,
-        {
-          uid: null,
-          todoid: id,
-          comid: newComment.id,
-          uname: uname,
-          comdetail: comdetail,
-          create: Timestamp.now(),
-        }
-      );
+      await setDoc(newComment, {
+        uid: null,
+        todoid: id,
+        comid: newComment.id,
+        uname: uname,
+        comdetail: comdetail,
+        create: Timestamp.now(),
+      });
 
       reset();
       onClose();
@@ -103,7 +123,7 @@ function TodoShow() {
         const todoDocRef = doc(db, "todoposts", id);
         const todoDocSnap = await getDoc(todoDocRef);
         if (todoDocSnap.exists() === false) {
-          router.replace('/404');
+          router.replace("/404");
         }
 
         const todoDocObj = todoDocSnap.data();
@@ -128,10 +148,7 @@ function TodoShow() {
 
   return (
     <Layout>
-      <Box
-        width="1080px"
-        margin="0 auto"
-      >
+      <Box width="1080px" margin="0 auto">
         <D1_HEAD>
           <Heading
             width="200px"
@@ -177,9 +194,7 @@ function TodoShow() {
               <P3>TITLE</P3>
               <P4>{todos.title}</P4>
               <P3>DETAIL</P3>
-              <P5>
-                {todos.detail}
-              </P5>
+              <P5>{todos.detail}</P5>
               <Box display="flex">
                 <Link href={`/${id}/todoedit`}>
                   <Button
@@ -234,40 +249,50 @@ function TodoShow() {
         <Modal isOpen={isOpen} onClose={onClose}>
           <form onSubmit={handleSubmit(addComment)}>
             <ModalOverlay />
-            <ModalContent
-              width={"400px"}
-              minHeight={"434px"}
-            >
-              <ModalHeader
-                fontWeight={"bold"}
-                fontSize={"36px"}
-              >Comment</ModalHeader>
-              <ModalBody
-                padding={"0"}
-                margin={"0 auto"}
-              >
-                <Box
-                  marginBottom={"9px"}
-                >
+            <ModalContent width={"400px"} minHeight={"434px"}>
+              <ModalHeader fontWeight={"bold"} fontSize={"36px"}>
+                Comment
+              </ModalHeader>
+              <ModalBody padding={"0"} margin={"0 auto"}>
+                <Box marginBottom={"9px"}>
                   <SModal_Label>Name</SModal_Label>
-                  <SModal_Input type="text" {...register("uname", { required: true, maxLength: unameMaxLength, onChange: (event) => { setUname(event.target.value) } })} />
-                  {errors.uname?.type === "required" && <PError>名前を入力してください</PError>}
-                  {errors.uname?.type === "maxLength" && <PError>名前は{unameMaxLength}文字以内で入力してください</PError>}
+                  <SModal_Input
+                    type="text"
+                    {...register("uname", {
+                      required: true,
+                      maxLength: unameMaxLength,
+                      onChange: (event) => {
+                        setUname(event.target.value);
+                      },
+                    })}
+                  />
+                  {errors.uname?.type === "required" && (
+                    <PError>名前を入力してください</PError>
+                  )}
+                  {errors.uname?.type === "maxLength" && (
+                    <PError>
+                      名前は{unameMaxLength}文字以内で入力してください
+                    </PError>
+                  )}
                 </Box>
-                <SModal_Textarea {...register("comdetail", { required: true, maxLength: comdetailMaxLength, onChange: (event) => setComdetail(event.target.value) })} />
-                {errors.comdetail?.type === "required" && <PError>コメントを入力してください</PError>}
-                {errors.comdetail?.type === "maxLength" && <PError>コメントは{comdetailMaxLength}文字以内で入力してください</PError>}
+                <SModal_Textarea
+                  {...register("comdetail", {
+                    required: true,
+                    maxLength: comdetailMaxLength,
+                    onChange: (event) => setComdetail(event.target.value),
+                  })}
+                />
+                {errors.comdetail?.type === "required" && (
+                  <PError>コメントを入力してください</PError>
+                )}
+                {errors.comdetail?.type === "maxLength" && (
+                  <PError>
+                    コメントは{comdetailMaxLength}文字以内で入力してください
+                  </PError>
+                )}
               </ModalBody>
-              <Box
-                margin={"0 auto"}
-                marginTop={"7px"}
-                marginBottom={"10px"}
-              >
-                <SModal_Button
-                  type="submit"
-                >
-                  CREATE
-                </SModal_Button>
+              <Box margin={"0 auto"} marginTop={"7px"} marginBottom={"10px"}>
+                <SModal_Button type="submit">CREATE</SModal_Button>
               </Box>
             </ModalContent>
           </form>
@@ -428,33 +453,33 @@ const P13 = styled.div`
 `;
 
 const SModal_Label = styled.div`
-height: 23px;
-font-weight: 700;
-font-size: 18px;
-line-height: 22px;
-color: rgba(0, 0, 0, 0.8);
+  height: 23px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  color: rgba(0, 0, 0, 0.8);
 `;
 
 const SModal_Input = styled(Input)`
-width: 372px;
-border: 1px solid rgba(0, 0, 0, 0.8);
+  width: 372px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
 `;
 
 const SModal_Textarea = styled(Textarea)`
-width: 372px;
-height:192px;
-border: 1px solid rgba(0, 0, 0, 0.8);
+  width: 372px;
+  height: 192px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
 `;
 
 const SModal_Button = styled(Button)`
-width: 372px;
-height: 43px;
-background: #28ADCA;
-border: 1px solid rgba(0, 0, 0, 0.8);
-border-radius: 10px;
-color: #F0FCFF;
+  width: 372px;
+  height: 43px;
+  background: #28adca;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  color: #f0fcff;
 `;
 
 const PError = styled.p`
-color: red;
+  color: red;
 `;

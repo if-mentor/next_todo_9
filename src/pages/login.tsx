@@ -5,7 +5,7 @@ import { auth } from "../libs/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
 
-const login = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -50,4 +50,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;
