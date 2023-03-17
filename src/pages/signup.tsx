@@ -9,7 +9,7 @@ import { FirebaseError } from "@firebase/util";
 type USER = {
   id: string;
 };
-const signup = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -48,4 +48,4 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default Signup;

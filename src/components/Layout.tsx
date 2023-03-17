@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Flex, Button, Spacer, Center } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
-import { useAuthContext } from "@/pages/context/AuthContext";
+import { useAuthContext } from "@/context/AuthContext";
 import { auth } from "@/libs/firebase";
 import Link from "next/link";
 
