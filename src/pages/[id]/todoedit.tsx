@@ -26,7 +26,6 @@ function TodoEdit() {
   const [updateData, setUpdateData] = useState("");
   const [count, setCount] = useAtom(docId);
 
-  //console.log(router.query.count);
   useEffect(() => {
     (async () => {
       setCount(window.location.pathname.slice(1, 21));
@@ -35,7 +34,7 @@ function TodoEdit() {
       const docsnap = await getDoc(docref);
 
       if (docsnap.exists() === false) {
-        router.replace('/404');
+        router.replace("/404");
         return;
       }
 
