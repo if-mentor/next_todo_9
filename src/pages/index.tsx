@@ -138,9 +138,6 @@ const TodoTop = () => {
     const endTodo = (currentPage - 1) * postPerPage + postPerPage;
     setPagedTodos(filteredtodos.slice(startTodo, endTodo));
   }, [currentPage]);
-  useEffect(() => {
-    console.log(pagedTodos + "そのページに表示される記事の配列");
-  });
 
   //status変更処理
   const statusChangeTodo = async (status: number, docId: string) => {
